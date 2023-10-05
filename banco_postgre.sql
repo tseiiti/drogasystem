@@ -1,1 +1,2 @@
-create database drogasystem;
+-- drop database if exists drogasystem;
+-- create database drogasystem;
