@@ -7,9 +7,12 @@ db = {
 }
 
 dc = {
-  "Laboratorio": "Laboratório", 
+  "main": "DrogaSystem", 
   "laboratorio": "laboratório", 
   "razao": "razão", 
   "apresentacao": "apresentação", 
-  "preco": "preço"
+  "preco": "preço", 
+  "quant_inicial": "quantidade", 
+  "quant_atual": "quantidade", 
+  "quant_venda": "quant. venda"
 }

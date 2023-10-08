@@ -70,11 +70,16 @@ class App:
     if model:
       self.model = model
   
+  def win_title(self):
+    return f'{self.corretor("main")} - {self.corretor(self.model.tname)}'
+  
   def set_dic(self, dic):
     if dic:
       self.dic = dic
   
   def corretor(self, texto, plural=False):
-    corrigido = dc[texto] if texto in dc else texto
+    corrigido = dc[texto.lower()] if texto.lower() in dc else texto
     if plural: corrigido += 's'
+    if texto[0] == texto[0].upper():
+      corrigido = corrigido[0].upper() + corrigido[1:]
     return corrigido

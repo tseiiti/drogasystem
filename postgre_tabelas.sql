@@ -34,11 +34,13 @@ create table medicamento (
 create table estoque (
   id              serial primary key, 
   medicamento_id  int not null references medicamento(id), 
-  quantidade      int not null, 
   lote            varchar(255) not null, 
-  preco           numeric(10, 2) not null, 
+  data            date not null default current_date, 
   validade        date not null, 
-  data            date not null default current_date
+  preco           numeric(10, 2) not null, 
+  quant_inicial   int not null, 
+  quant_venda     int not null default 0, 
+  quant_atual     int not null default 0
 );
 
 create table estoque_total (
@@ -80,6 +82,7 @@ create table itens_venda (
   id              serial primary key, 
   venda_id        int not null references venda(id), 
   medicamento_id  int not null references medicamento(id), 
+  estoque_id      int not null references estoque(id), 
   quantidade      int not null, 
   desconto        numeric(10, 2) not null default 0, 
   total           numeric(10, 2) not null
