@@ -1,5 +1,5 @@
 import psycopg2
-from db_conf import db
+from conf import db
 from app import App
 
 class Model:

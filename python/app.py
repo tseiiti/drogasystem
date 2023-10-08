@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+from conf import dc
 
 class App:
   def view(self):
@@ -74,13 +75,6 @@ class App:
       self.dic = dic
   
   def corretor(self, texto, plural=False):
-    dic = {
-      "Laboratorio": "Laboratório", 
-      "laboratorio": "laboratório", 
-      "razao": "razão", 
-      "apresentacao": "apresentação", 
-      "preco": "preço"
-    }
-    corrigido = dic[texto] if texto in dic else texto
+    corrigido = dc[texto] if texto in dc else texto
     if plural: corrigido += 's'
     return corrigido

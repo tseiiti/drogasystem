@@ -3,17 +3,20 @@ from app import sg, App
 class Save(App):
   def view(self):
     content = self.get_content()
+    btns = [sg.Button(" Voltar "), sg.Button(" Salvar ")]
+    if self.add_extra_button(): btns.append(self.add_extra_button())
     
-    layout = [
+    col1 = [[sg.Image(f'images/{self.model.tname.lower()}-vertical.png')]]
+    col2 = [
       [self.titulo(f"{'Criar' if self.dic['id'] == '' else 'Atualizar'} {self.corretor(self.model.tname)}")], 
       [sg.HorizontalSeparator()], 
       *content, 
       [sg.HorizontalSeparator()], 
       [sg.Text(key="-SAIDA-")], 
-      [sg.Button(" Voltar "), sg.Button(" Salvar "), 
-      self.add_extra_button()]]
+      btns]
+    layout = [[sg.Column(col1), sg.Column(col2, vertical_alignment='top')]]
     
-    self.window = sg.Window(self.model.tname, layout, resizable=True)
+    self.window = sg.Window(self.model.tname, layout, size=(800, 480))
     
   def controller(self, event, values):
     if event == " Salvar ":
@@ -42,7 +45,7 @@ class Save(App):
     }
 
   def add_extra_button(self):
-    return []
+    return None
   
   def controller_helper(self, event, values):
     print()
