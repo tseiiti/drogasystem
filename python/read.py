@@ -9,12 +9,12 @@ class Read(App):
   def view(self):
     self.set_cols_rows()
     layout = [
-      [sg.Image(f'images/{self.model.tname.lower()}-horizontal.png')], 
+      [sg.Image(f'images/{self.model.tname.lower()}_horizontal.png')], 
       [self.titulo(f"Lista de {self.corretor(self.model.tname, True)}")], 
       [self.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar "), sg.Button(" Novo ")]]
     
-    self.window = sg.Window('DrogaSystem - ' + self.corretor(self.model.tname), layout, size=(800, 480))
+    self.window = sg.Window(self.win_title(), layout, size=(800, 480))
     
   def controller(self, event, values):
     if event == " Novo ":
