@@ -9,7 +9,7 @@ db = {
 dc = {
   "main": "DrogaSystem", 
   "laboratorio": "laboratório", 
-  "razao": "razão", 
+  "razao": "razão social", 
   "apresentacao": "apresentação", 
   "preco": "preço", 
   "quant_inicial": "quantidade", 
