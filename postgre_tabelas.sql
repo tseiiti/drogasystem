@@ -7,6 +7,7 @@ drop table if exists itens_venda;
 drop table if exists venda;
 drop table if exists profissional;
 drop table if exists cliente;
+drop table if exists pessoa;
 drop table if exists estoque_total;
 drop table if exists estoque;
 drop table if exists medicamento;
@@ -51,22 +52,29 @@ create table estoque_total (
   maximo          int not null default 9999
 );
 
-create table cliente (
+create table pessoa (
   id              serial primary key, 
   nome            varchar(255) not null, 
-  cpf             varchar(255) not null, 
-  endereco        varchar(255), 
-  telefone        varchar(255), 
+  logradouro      varchar(255), 
+  número          varchar(255), 
+  complemento     varchar(255), 
+  bairro          varchar(255), 
+  cep             char(10), 
+  cidade          varchar(255), 
+  estado          char(2), 
+  telefone        varchar(255)
+);
+
+create table cliente (
+  id              int primary key references pessoa(id), 
+  cpf             varchar(255) not null unique, 
   data_nasc       date not null, 
   sexo            char(1) not null check (sexo in ('F', 'M'))
 );
 
 create table profissional (
-  id              serial primary key, 
+  id              int primary key references pessoa(id), 
   registro        varchar(255) not null unique, 
-  nome            varchar(255) not null, 
-  endereco        varchar(255), 
-  telefone        varchar(255), 
   tipo            varchar(255) not null check (tipo in ('médico', 'dentista', 'veterinário'))
 );
 
