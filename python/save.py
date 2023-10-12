@@ -18,7 +18,7 @@ class Save(App):
       btns]
     layout = [[sg.Column(col1), sg.Column(col2, vertical_alignment='top')]]
     
-    self.window = sg.Window(self.win_title(), layout, size=(800, 520))
+    self.window = sg.Window(self.win_title(), layout, size=(812, 520))
     
   # define ações e regras da tela
   def controller(self, event, values):
@@ -37,7 +37,7 @@ class Save(App):
   # método auxiliar que gera outros componentes da tela
   def get_content(self):
     return [[
-      sg.Text(text=f"{self.corretor(k).title()}: ", size=12), 
+      sg.Text(text=f"{self.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))]
       for k, v in self.dic.items()]
 

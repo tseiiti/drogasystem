@@ -13,7 +13,7 @@ class Read(App):
     self.set_cols_rows()
     layout = [
       [sg.Image(f'images/{self.model.tname.lower()}_horizontal.png')], 
-      [self.titulo(f"Lista de {self.corretor(self.model.tname, True)}")], 
+      [self.titulo(f"Lista de {self.corretor(self.model.tname, plural=True, title=True)}")], 
       [self.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar "), sg.Button(" Novo ")]]
     

@@ -16,6 +16,6 @@ dc = {
   "preco": "preço", 
   "quant_inicial": "quantidade", 
   "quant_atual": "quantidade", 
-  "data_nasc": "data nasc", 
+  "data_nasc": "data nascimento", 
   "quant_venda": "quant. venda"
 }

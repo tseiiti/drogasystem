@@ -87,12 +87,11 @@ class App:
   
   # método auxiliar para definir título da tela
   def win_title(self):
-    return f'{self.corretor("main")} - {self.corretor(self.model.tname)}'
+    return f'{self.corretor("main")} - {self.corretor(self.model.tname, title=True)}'
   
   # método auxiliar para trocar textos
-  def corretor(self, texto, plural=False):
+  def corretor(self, texto, plural=False, title=False):
     corrigido = dc[texto.lower()] if texto.lower() in dc else texto
     if plural: corrigido += 's'
-    if texto[0] == texto[0].upper():
-      corrigido = corrigido[0].upper() + corrigido[1:]
+    if title: corrigido = corrigido.title()
     return corrigido
