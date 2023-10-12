@@ -1,11 +1,14 @@
 from app import sg, App
 
+# tela padrão para listar conteúdo das tabelas
 class Read(App):
+  # define a tabela e a tela de atualização
   def __init__(self, model, save):
     self.model = model
     self.save = save
     self.save.set_model(self.model)
 
+  # define os componentes da tela
   def view(self):
     self.set_cols_rows()
     layout = [
@@ -14,8 +17,9 @@ class Read(App):
       [self.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar "), sg.Button(" Novo ")]]
     
-    self.window = sg.Window(self.win_title(), layout, size=(800, 480))
+    self.window = sg.Window(self.win_title(), layout, size=(900, 476))
     
+  # define ações e regras da tela
   def controller(self, event, values):
     if event == " Novo ":
       self.edit(0)
@@ -23,19 +27,14 @@ class Read(App):
     elif "+CLICKED+" in event and event[2][0] is not None:
       self.edit(self.rows[event[2][0]][0])
 
+  # define o conteúdo da tabela
   def set_cols_rows(self):
     self.rows = self.model.select()
     self.cols = [self.corretor(c) for c in self.model.columns()]
   
+  # método auxiliar para chamar a tela auxiliar de atualização do registro
   def edit(self, id):
     self.save.set_dic(self.model.find(id))
     self.open(self.save)
     self.set_cols_rows()
     self.window["-TABLE-"].update(values=self.rows)
-
-
-
-# if __name__ == "__main__":
-#   from model import Model
-#   from save import Save
-#   Read(Model("Categoria"), Save()).run()

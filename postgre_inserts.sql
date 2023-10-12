@@ -33,11 +33,15 @@ update estoque_total set total = total + 10 where medicamento_id = 1;
 update estoque_total set total = total + 15 where medicamento_id = 2;
 update estoque_total set total = total + 10 where medicamento_id = 2;
 
-insert into cliente (nome, cpf, sexo, data_nasc) 
-  values ('eu', '1234567890', 'M', '1965-12-31');
+insert into pessoa (nome) 
+  values ('eu');
+insert into cliente (id, cpf, data_nasc, sexo) 
+  values (1, '1234567890', '1965-12-31', 'M');
 
-insert into profissional (registro, nome, tipo) 
-  values ('123456', 'prof', 'médico');
+insert into pessoa (nome) 
+  values ('joão');
+insert into profissional (id, registro, tipo) 
+  values (2, '123456', 'médico');
 
 insert into venda (cliente_id, total) 
   values (1, 129.2);
@@ -52,7 +56,7 @@ update estoque_total set total = total - 2 where medicamento_id = 1;
 update estoque_total set total = total - 2 where medicamento_id = 2;
 
 insert into venda (profissional_id, total) 
-  values (1, 69);
+  values (2, 69);
 insert into itens_venda (venda_id, medicamento_id, estoque_id, quantidade, total) 
   values (2, 1, 1, 1, 46);
 insert into itens_venda (venda_id, medicamento_id, estoque_id, quantidade, total) 

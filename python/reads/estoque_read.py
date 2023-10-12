@@ -1,6 +1,8 @@
 from read import Read
 
+# classe personalizada para listar estoques
 class EstoqueRead(Read):
+  # personaliza atributos da lista
   def set_cols_rows(self):
     sql = "select "
     sql += "estoque.id, medicamento.nome as medicamento, estoque.quant_atual, estoque.preco, estoque.validade "

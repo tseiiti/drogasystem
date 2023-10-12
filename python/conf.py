@@ -1,3 +1,4 @@
+# configurações do banco de dados
 db = {
   "database": "drogasystem", 
   "user": "oscar", 
@@ -6,6 +7,7 @@ db = {
   "port": "5432"
 }
 
+# dicionário do sistema
 dc = {
   "main": "DrogaSystem", 
   "laboratorio": "laboratório", 
@@ -14,5 +16,6 @@ dc = {
   "preco": "preço", 
   "quant_inicial": "quantidade", 
   "quant_atual": "quantidade", 
+  "data_nasc": "data nasc", 
   "quant_venda": "quant. venda"
 }

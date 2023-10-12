@@ -1,6 +1,8 @@
 from read import Read
 
+# classe personalizada para listar medicamentos
 class MedicamentoRead(Read):
+  # personaliza atributos da lista
   def set_cols_rows(self):
     sql = "select "
     sql += "medicamento.id, laboratorio.nome as laboratorio, medicamento.nome, medicamento.tipo, medicamento.quantidade, medicamento.preco "
@@ -9,4 +11,3 @@ class MedicamentoRead(Read):
     sql += "order by 1"
     self.rows = self.model.find_by_sql(sql)
     self.cols = [self.corretor(c) for c in self.model.columns()]
-    # , medicamento.dosagem, medicamento.apresentacao, medicamento.controle 

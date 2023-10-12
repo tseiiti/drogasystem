@@ -2,3 +2,4 @@ __pycache__/
 *.architect~
 
 anotacoes.txt
+**/teste**
