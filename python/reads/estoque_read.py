@@ -1,4 +1,4 @@
-from read import Read
+from read import ut, Read
 
 # classe personalizada para listar estoques
 class EstoqueRead(Read):
@@ -10,4 +10,4 @@ class EstoqueRead(Read):
     sql += "join medicamento on medicamento.id = estoque.medicamento_id "
     sql += "order by 1"
     self.rows = self.model.find_by_sql(sql)
-    self.cols = [self.corretor(c) for c in self.model.columns()]
+    self.cols = [ut.corretor(c) for c in self.model.columns()]

@@ -1,4 +1,4 @@
-from app import sg, App
+from app import sg, ut, App
 from model import Model
 from read import Read
 from save import Save
@@ -28,7 +28,7 @@ class Main(App):
       sg.Button("Sair", key=" Voltar ", size=(10, 4))
       ]]
     
-    self.window = sg.Window(self.corretor("main"), layout, size=(800, 210), resizable=True)
+    self.window = sg.Window(ut.corretor("main"), layout, size=(800, 210), resizable=True)
 
   # define ações e regras da tela
   def controller(self, event, values):

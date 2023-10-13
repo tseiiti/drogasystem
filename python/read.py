@@ -1,4 +1,4 @@
-from app import sg, App
+from app import sg, ut, App
 
 # tela padrão para listar conteúdo das tabelas
 class Read(App):
@@ -13,11 +13,11 @@ class Read(App):
     self.set_cols_rows()
     layout = [
       [sg.Image(f'images/{self.model.tname.lower()}_horizontal.png')], 
-      [self.titulo(f"Lista de {self.corretor(self.model.tname, plural=True, title=True)}")], 
-      [self.gen_table(self.rows, self.cols)], 
+      [ut.titulo(f"Lista de {ut.corretor(self.model.tname, plural=True, title=True)}")], 
+      [ut.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar "), sg.Button(" Novo ")]]
     
-    self.window = sg.Window(self.win_title(), layout, size=(900, 476))
+    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=(900, 476))
     
   # define ações e regras da tela
   def controller(self, event, values):
@@ -30,7 +30,7 @@ class Read(App):
   # define o conteúdo da tabela
   def set_cols_rows(self):
     self.rows = self.model.select()
-    self.cols = [self.corretor(c) for c in self.model.columns()]
+    self.cols = [ut.corretor(c) for c in self.model.columns()]
   
   # método auxiliar para chamar a tela auxiliar de atualização do registro
   def edit(self, id):

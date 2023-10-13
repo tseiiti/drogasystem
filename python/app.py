@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from conf import dc
+from util import Util as ut
 
 # classe padrão com funções primárias e auxiliares para todo o sistema
 class App:
@@ -33,24 +33,9 @@ class App:
 
   # método auxiliar que esconde a tela atual ao chamar outra tela
   def open(self, win):
-      self.window.Hide()
-      win.run()
-      self.window.UnHide()
-  
-  # método auxiliar para gerar tabela
-  def gen_table(self, values, headings):
-    return sg.Table(
-      values=values, 
-      headings=headings,
-      auto_size_columns=True,
-      display_row_numbers=False,
-      justification="center", 
-      key="-TABLE-",
-      selected_row_colors="black on gray",
-      enable_events=True,
-      expand_x=True,
-      expand_y=False,
-      enable_click_events=True)
+    self.window.Hide()
+    win.run()
+    self.window.UnHide()
   
   # método auxiliar para apresentar erro em formulário
   def error_out(self, error):
@@ -58,40 +43,11 @@ class App:
       self.window["-SAIDA-"].update(error)
     self.error = error
 
-  # método auxiliar para converter (lista de) chaves e valores em dicionário
-  def gen_dict(self, keys, values=None):
-    dic = {}
-    for i in range(len(keys)):
-      dic[keys[i]] = values[i] if values else ""
-    return dic
-
   # método auxiliar para definir model
   def set_model(self, model):
-    if model:
-      self.model = model
+    if model: self.model = model
   
   # método auxiliar para definir dic
   def set_dic(self, dic):
-    if dic:
-      self.dic = dic
+    if dic: self.dic = dic
   
-  # método auxiliar que define a fonte do título dos formulários
-  def titulo(self, text):
-    return sg.Text(
-      text=text, 
-      font=("Arial Bold", 16), 
-      size=16, 
-      expand_x=True, 
-      justification="center"
-    )
-  
-  # método auxiliar para definir título da tela
-  def win_title(self):
-    return f'{self.corretor("main")} - {self.corretor(self.model.tname, title=True)}'
-  
-  # método auxiliar para trocar textos
-  def corretor(self, texto, plural=False, title=False):
-    corrigido = dc[texto.lower()] if texto.lower() in dc else texto
-    if plural: corrigido += 's'
-    if title: corrigido = corrigido.title()
-    return corrigido

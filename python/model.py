@@ -1,6 +1,6 @@
 import psycopg2
 from conf import db
-from app import App
+from util import Util as ut
 
 # classe Object-Relational Mapping (ORM)
 class Model:
@@ -13,7 +13,7 @@ class Model:
     rows = self.exec(self.sel, f"where id = {id}")
     if self.error == "":
       rows = rows[0] if rows else None
-      return App().gen_dict(self.cols, rows)
+      return ut.gen_dict(self.cols, rows)
     else:
       return self.error
 
