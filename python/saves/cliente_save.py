@@ -5,15 +5,23 @@ class ClienteSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
     self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
+
+    # atributos pessoa
     content = [[
       sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))
     ] for k, v in self.pessoa.items()]
     
+    # atributos cliente
     content.extend([[
       sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-")
+      if k != "data_nasc" else
+        sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True),
+        sg.CalendarButton("CALENDÁRIO", font=('Arial Bold', 7), 
+          close_when_date_chosen=True, target=f"-{k.upper()}-", format='%Y-%m-%d', size=13)
     ] for k, v in self.dic.items() if k != "id"])
+
     return content
   
   # retorna vazio para desativar a gravação padrão e controlar em controller_helper

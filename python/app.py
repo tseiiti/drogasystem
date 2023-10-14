@@ -15,20 +15,16 @@ class App:
   def run(self):
     sg.set_options(font=("Arial", 12))
     self.view()
-    self.error = ""
 
+    self.error = ""
     while True:
       event, values = self.window.read()
       print(type(self).__name__ + ":", event, values)
 
-      if event == " Voltar " or event == sg.WIN_CLOSED:
-        break
-
+      if event == " Voltar " or event == sg.WIN_CLOSED: break
       self.controller(event, values)
-
-      if self.error == "Fechar":
-        break
-
+      if self.error == "Fechar": break
+      
     self.window.close()
 
   # método auxiliar que esconde a tela atual ao chamar outra tela
@@ -40,7 +36,8 @@ class App:
   # método auxiliar para apresentar erro em formulário
   def error_out(self, error):
     if error != "Fechar":
-      self.window["-SAIDA-"].update(error)
+      # self.window["-SAIDA-"].update(error)
+      sg.popup(error, title="Erro!")
     self.error = error
 
   # método auxiliar para definir model

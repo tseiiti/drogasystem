@@ -14,6 +14,7 @@ dc = {
   "razao": "razão social", 
   "apresentacao": "apresentação", 
   "preco": "preço", 
+  "medicamento_id": "medicamento", 
   "quant_inicial": "quantidade", 
   "quant_atual": "quantidade", 
   "numero": "número", 

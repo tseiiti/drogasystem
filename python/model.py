@@ -10,13 +10,13 @@ class Model:
     self.tn = self.tname.lower()
 
   # select padrão
-  def select(self):
-    sql = f"select * from {self.tn} order by 1;"
+  def select(self, cols="*"):
+    sql = f"select {cols} from {self.tn} order by 1;"
     return self.exec(sql, self.all)
   
   # select com condição
-  def where(self, params):
-    sql = f"select * from {self.tn} {'where ' + params if params else ''} order by 1;"
+  def where(self, params, cols="*"):
+    sql = f"select {cols} from {self.tn} {'where ' + params if params else ''} order by 1;"
     return self.exec(sql, self.all)
   
   # select personalizado
@@ -24,13 +24,13 @@ class Model:
     return self.exec(sql, self.all)
   
   # procura um registro específico
-  def find(self, id):
-    sql = f"select * from {self.tn} where id = {id};"
+  def find(self, id, cols="*"):
+    sql = f"select {cols} from {self.tn} where id = {id};"
     return self.exec(sql, self.one)
 
   # select com colunas
-  def select_with_columns(self):
-    sql = f"select * from {self.tn} order by 1;"
+  def select_with_columns(self, cols="*"):
+    sql = f"select {cols} from {self.tn} order by 1;"
     return self.exec(sql, self.all), self.cols
 
   # nomes das colunas
