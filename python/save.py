@@ -2,6 +2,11 @@ from app import sg, ut, App
 
 # tela padrão para atualizar e criar um registro
 class Save(App):
+  # método para definir model e dic
+  def set_dic(self, model, id):
+    self.model = model
+    self.dic = self.model.find(id)
+
   # define os componentes da tela
   def view(self):
     content = self.get_content()
@@ -31,9 +36,6 @@ class Save(App):
       else:
         self.error_out(self.model.update(params))
 
-      if self.error == "":
-        self.error = "Fechar"
-      
     self.controller_helper(event, values)
 
   # método auxiliar que gera outros componentes da tela

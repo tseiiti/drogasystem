@@ -7,116 +7,102 @@ class Model:
   # define nome da tabela
   def __init__(self, tname=None):
     self.tname = type(self).__name__.replace("Model", "") if tname is None else tname
-  
-  # procura um registro específico
-  def find(self, id):
-    rows = self.exec(self.sel, f"where id = {id}")
-    if self.error == "":
-      rows = rows[0] if rows else None
-      return ut.gen_dict(self.cols, rows)
-    else:
-      return self.error
+    self.tn = self.tname.lower()
 
   # select padrão
   def select(self):
-    return self.exec(self.sel)
+    sql = f"select * from {self.tn} order by 1;"
+    return self.exec(sql, self.all)
   
   # select com condição
   def where(self, params):
-    return self.exec(self.sel, params)
+    sql = f"select * from {self.tn} {'where ' + params if params else ''} order by 1;"
+    return self.exec(sql, self.all)
+  
+  # select personalizado
+  def find_by_sql(self, sql):
+    return self.exec(sql, self.all)
+  
+  # procura um registro específico
+  def find(self, id):
+    sql = f"select * from {self.tn} where id = {id};"
+    return self.exec(sql, self.one)
 
-  # insert padrão
-  def insert(self, params):
-    return self.exec(self.ins, params)
-
-  # update padrão
-  def update(self, params):
-    return self.exec(self.upd, params)
-
-  # delete padrão
-  def delete(self, params):
-    return self.exec(self.dlt, params)
+  # select com colunas
+  def select_with_columns(self):
+    sql = f"select * from {self.tn} order by 1;"
+    return self.exec(sql, self.all), self.cols
 
   # nomes das colunas
   def columns(self):
-    return self.exec(self.col)
+    return self.cols
 
-  # select personalizado
-  def find_by_sql(self, params):
-    return self.exec(self.fnd, params)
+  # auxiliar insert
+  def sql_ins(self, params):
+    col = ", ".join(k for k, v in params.items() if not (k == "id" and v == ""))
+    val = ", ".join(f"'{v}'" for k, v in params.items() if not (k == "id" and v == ""))
+    return f"insert into {self.tn} ({col}) values ({val});"
+
+  # insert padrão
+  def insert(self, params):
+    return self.exec(self.sql_ins(params), self.com)
+
+  # auxiliar update
+  def sql_upd(self, params):
+    aux = ", ".join(f"{k} = '{v}'" for k, v in params.items() if k != "id")
+    return f"update {self.tn} set {aux} where id = {params['id']};"
+  
+  # update padrão
+  def update(self, params):
+    return self.exec(self.sql_upd(params), self.com)
+  
+  # atualizações personalizadas
+  def commit(self, sql):
+    return self.exec(sql, self.com)
+  
+  
 
   # método auxiliar para abrir uma conexão
   def conn(self):
-    self.con = psycopg2.connect(
+    con = psycopg2.connect(
       database = db["database"],
       user = db["user"],
       password = db["password"],
       host = db["host"],
       port = db["port"])
-    self.cur = self.con.cursor()
+    cur = con.cursor()
+    return con, cur
   
   # método principal para execução dos comandos
-  def exec(self, func, params=None):
+  def exec(self, sql, fun):
     try:
-      self.conn()
-      self.params = params
-      self.error = ""
-      return func()
+      con, cur = self.conn()
+      return fun(sql, con, cur)
       
     except (Exception, psycopg2.Error) as error:
       print("Error:", error)
-      self.error = error
       return error
 
     finally:
-      print("SQL:", self.sql)
-      if self.cur:
-        self.cur.close()
-      if self.con:
-        self.con.close()
+      print("SQL:", sql)
+      if cur: cur.close()
+      if con: con.close()
 
-  # método auxiliar para selects
-  def sel(self):
-    self.sql = f"select * from {self.tname.lower()} {str(self.params or '')} order by 1"
-    self.cur.execute(self.sql)
-    self.cols = [dsc[0] for dsc in self.cur.description]
-    return self.cur.fetchall()
+  # executa selects e retorna todos os registros
+  def all(self, sql, con, cur):
+    cur.execute(sql)
+    self.cols = [dsc[0] for dsc in cur.description]
+    return cur.fetchall()
+  
+  # executa atualizações e commita
+  def com(self, sql, con, cur):
+    cur.execute(sql)
+    con.commit()
+    return "Fechar"
 
-  # método auxiliar para inserts
-  def ins(self):
-    col = ", ".join(k for k in self.params.keys() if k != "id")
-    val = ", ".join(f"'{v}'" for k, v in self.params.items() if k != "id")
-    self.sql = f"insert into {self.tname.lower()} ({col}) values ({val})"
-    self.cur.execute(self.sql)
-    self.con.commit()
-    return ""
-
-  # método auxiliar para updates
-  def upd(self):
-    aux = ", ".join(f"{k} = '{v}'" for k, v in self.params.items() if k != "id")
-    self.sql = f"update {self.tname.lower()} set {aux} where id = {self.params['id']}"
-    self.cur.execute(self.sql)
-    self.con.commit()
-    return ""
-
-  # método auxiliar para deletes
-  def dlt(self):
-    self.sql = f"delete from {self.tname.lower()} {str(self.params)}"
-    self.cur.execute(self.sql)
-    self.con.commit()
-    return ""
-
-  # método auxiliar para recuperar nome das colunas
-  def col(self):
-    if not self.sql:
-      self.sql = f"select * from {self.tname.lower()} limit 0"
-      self.cur.execute(self.sql)
-      self.cols = [dsc[0] for dsc in self.cur.description]
-    return self.cols
-
-  # método auxiliar para selects personalizados
-  def fnd(self):
-    self.sql = self.params
-    self.cur.execute(self.sql)
-    self.cols = [dsc[0] for dsc in self.cur.description]
-    return self.cur.fetchall()
+  # executa select e retorna 1 registro
+  def one(self, sql, con, cur):
+    cur.execute(sql)
+    self.cols = [dsc[0] for dsc in cur.description]
+    # return dict(zip(self.cols, cur.fetchone()))
+    return ut.gen_dict(self.cols, cur.fetchone())

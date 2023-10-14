@@ -17,6 +17,6 @@ class EstoqueSave(Save):
   # adiciona atributo personalizado na atualização
   def get_params(self, values, dic):
     params = super().get_params(values, dic)
-    medicamento_id = self.model.medicamento.where(f"where nome = '{params['medicamento_id']}'")[0][0]
+    medicamento_id = self.model.medicamento.where(f"nome = '{params['medicamento_id']}'")[0][0]
     params["medicamento_id"] = medicamento_id
     return params

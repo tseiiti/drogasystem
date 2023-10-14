@@ -39,15 +39,11 @@ class App:
   
   # método auxiliar para apresentar erro em formulário
   def error_out(self, error):
-    if error != "":
+    if error != "Fechar":
       self.window["-SAIDA-"].update(error)
     self.error = error
 
   # método auxiliar para definir model
   def set_model(self, model):
-    if model: self.model = model
-  
-  # método auxiliar para definir dic
-  def set_dic(self, dic):
-    if dic: self.dic = dic
+    self.model = model
   

@@ -56,7 +56,7 @@ create table pessoa (
   id              serial primary key, 
   nome            varchar(255) not null, 
   logradouro      varchar(255), 
-  número          varchar(255), 
+  numero          varchar(255), 
   complemento     varchar(255), 
   bairro          varchar(255), 
   cep             char(10), 

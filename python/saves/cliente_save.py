@@ -4,7 +4,7 @@ from save import sg, ut, Save
 class ClienteSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    self.pessoa = self.model.pessoa.find(self.dic['id'])
+    self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
     content = [[
       sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))
@@ -16,17 +16,27 @@ class ClienteSave(Save):
     ] for k, v in self.dic.items() if k != "id"])
     return content
   
-  # adiciona atributo personalizado na atualização
+  # retorna vazio para desativar a gravação padrão e controlar em controller_helper
   def get_params(self, values, dic):
     return {}
 
+  # gravação personalizada
   def controller_helper(self, event, values):
     if event == " Salvar ":
-      params = super().get_params(values, self.dic)
-      print(params)
-      x = {
+      cliente = super().get_params(values, self.dic)
+      pessoa = {
         str(key).replace("-", "").lower(): val 
         for key, val in values.items() 
         if str(key).replace("-", "").lower() in self.pessoa.keys()
       }
-      print(x)
+
+      if pessoa["id"] == "":
+        aux = self.model.pessoa.find_by_sql('select max(id) + 1 id from pessoa;')
+        pessoa["id"] = aux[0][0]
+        cliente["id"] = aux[0][0]
+        sql = self.model.pessoa.sql_ins(pessoa)
+        sql += self.model.sql_ins(cliente)
+      else:
+        sql = self.model.pessoa.sql_upd(pessoa)
+        sql += self.model.sql_upd(cliente)
+      self.error_out(self.model.commit(sql))

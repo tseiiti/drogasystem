@@ -17,6 +17,6 @@ class MedicamentoSave(Save):
   # adiciona atributo personalizado na atualização
   def get_params(self, values, dic):
     params = super().get_params(values, dic)
-    laboratorio_id = self.model.laboratorio.where(f"where nome = '{params['laboratorio_id']}'")[0][0]
+    laboratorio_id = self.model.laboratorio.where(f"nome = '{params['laboratorio_id']}'")[0][0]
     params["laboratorio_id"] = laboratorio_id
     return params

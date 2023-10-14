@@ -6,7 +6,6 @@ class Read(App):
   def __init__(self, model, save):
     self.model = model
     self.save = save
-    self.save.set_model(self.model)
 
   # define os componentes da tela
   def view(self):
@@ -34,7 +33,7 @@ class Read(App):
   
   # método auxiliar para chamar a tela auxiliar de atualização do registro
   def edit(self, id):
-    self.save.set_dic(self.model.find(id))
+    self.save.set_dic(self.model, id)
     self.open(self.save)
     self.set_cols_rows()
     self.window["-TABLE-"].update(values=self.rows)
