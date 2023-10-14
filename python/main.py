@@ -6,29 +6,39 @@ from save import Save
 from models.medicamento_model import MedicamentoModel
 from models.estoque_model import EstoqueModel
 from models.cliente_model import ClienteModel
+from models.profissional_model import ProfissionalModel
 
 from reads.medicamento_read import MedicamentoRead
 from reads.estoque_read import EstoqueRead
 from reads.cliente_read import ClienteRead
+from reads.profissional_read import ProfissionalRead
 
 from saves.medicamento_save import MedicamentoSave
 from saves.estoque_save import EstoqueSave
 from saves.cliente_save import ClienteSave
+from saves.profissional_save import ProfissionalSave
 
 # classe principal para execução e menu do sistema
 class Main(App):
   # define os componentes da tela
   def view(self):
     layout = [[
+      [sg.HorizontalSeparator()], 
+      [sg.Image(f'images/drogasystem.png', expand_x=True, expand_y=True)]
+      ], [
       sg.Button("Laboratório", size=(10, 4)), 
       sg.Button("Medicamento", size=(10, 4)), 
       sg.Button("Estoque", size=(10, 4)), 
-      sg.Button("Cliente", size=(10, 4))
+      sg.Button("Cliente", size=(10, 4)), 
+      sg.Button("Profissional", size=(10, 4)), 
+      sg.Button("Venda", size=(10, 4)), 
+      sg.Button("Sair", key=" Voltar ", size=(10, 4)), 
+      [sg.HorizontalSeparator()]
       ], [
-      sg.Button("Sair", key=" Voltar ", size=(10, 4))
-      ]]
+      [sg.Text(key="-SAIDA-", size=(40, 1))]
+    ]]
     
-    self.window = sg.Window(ut.corretor("main"), layout, size=(800, 210), resizable=True)
+    self.window = sg.Window(ut.corretor("main"), layout, size=(916, 400), resizable=True)
 
   # define ações e regras da tela
   def controller(self, event, values):
@@ -43,6 +53,9 @@ class Main(App):
 
     elif event == "Cliente":
       self.open(ClienteRead(ClienteModel(), ClienteSave()))
+
+    elif event == "Profissional":
+      self.open(ProfissionalRead(ProfissionalModel(), ProfissionalSave()))
 
 if __name__ == "__main__":
   Main().run()
