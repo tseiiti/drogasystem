@@ -28,7 +28,11 @@ class Util:
   # método auxiliar para trocar textos
   def corretor(texto, plural=False, title=False):
     corrigido = dc[texto.lower()] if texto.lower() in dc else texto
-    if plural: corrigido += 's'
+    if plural:
+      if corrigido[-1] == "l":
+        corrigido = corrigido[:-1] + "is"
+      else:
+        corrigido += 's'
     if title: corrigido = corrigido.title()
     return corrigido
   
