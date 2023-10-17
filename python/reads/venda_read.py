@@ -5,9 +5,8 @@ class VendaRead(Read):
   # personaliza atributos da lista
   def set_cols_rows(self):
     sql = "select "
-    sql += "venda.id, venda.time_stamp, venda.total, pessoa.nome, cliente.cpf, profissional.registro "
+    sql += "venda.id, venda.time_stamp, venda.total, cliente.cpf, profissional.registro "
     sql += "from venda "
-    sql += "left join pessoa on pessoa.id = venda.pessoa_id "
     sql += "left join cliente on cliente.id = venda.cliente_id "
     sql += "left join profissional on profissional.id = venda.profissional_id "
     sql += "order by 1"

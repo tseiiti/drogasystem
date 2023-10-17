@@ -5,12 +5,9 @@ class EstoqueSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
     item = self.model.medicamento.find(self.dic["medicamento_id"]) if self.dic["medicamento_id"] != "" else { "nome": "" }
-
     content = []
     for k, v in self.dic.items():
-      if k in ["quant_venda", "quant_atual"]:
-        continue
-
+      if k in ["quant_venda", "quant_atual"]: continue
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
       if k in ["data", "validade"]: 
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True))
@@ -20,9 +17,7 @@ class EstoqueSave(Save):
         aux.append(sg.Combo([opcao[0] for opcao in self.model.medicamento.select(cols="nome")], default_value=item["nome"], key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
-      
       content.append(aux)
-
     return content
   
   # adiciona atributo personalizado na atualização

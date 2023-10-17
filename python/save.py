@@ -7,6 +7,13 @@ class Save(App):
     self.model = model
     self.dic = self.model.find(id)
 
+  # método auxiliar que gera outros componentes da tela
+  def get_content(self):
+    return [[
+      sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
+      sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))]
+      for k, v in self.dic.items()]
+
   # define os componentes da tela
   def view(self):
     content = self.get_content()
@@ -37,13 +44,6 @@ class Save(App):
         self.error_out(self.model.update(params))
 
     self.controller_helper(event, values)
-
-  # método auxiliar que gera outros componentes da tela
-  def get_content(self):
-    return [[
-      sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
-      sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))]
-      for k, v in self.dic.items()]
 
   # método auxiliar para definir conteúdo do registro que será enviado ao banco
   def get_params(self, values, dic):

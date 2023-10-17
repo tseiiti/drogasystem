@@ -5,7 +5,6 @@ class MedicamentoSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
     item = self.model.laboratorio.find(self.dic["laboratorio_id"]) if self.dic["laboratorio_id"] != "" else { "nome": "" }
-
     content = []
     for k, v in self.dic.items():
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
@@ -19,9 +18,7 @@ class MedicamentoSave(Save):
         aux.append(sg.Combo(["não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"], default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
-      
       content.append(aux)
-
     return content
   
   # adiciona atributo personalizado na atualização

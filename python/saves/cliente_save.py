@@ -14,9 +14,7 @@ class ClienteSave(Save):
     
     # atributos cliente
     for k, v in self.dic.items():
-      if k == "id":
-        continue
-
+      if k == "id": continue
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
       if k == "data_nasc": 
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True))
@@ -26,18 +24,7 @@ class ClienteSave(Save):
         aux.append(sg.Combo(["Masculino", "Feminino"], default_value="Masculino" if v == "M" else "Feminino", key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
-      
       content.append(aux)
-
-    # content.extend([[
-    #   sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
-    #   sg.Input(default_text=v, key=f"-{k.upper()}-")
-    #   if k != "data_nasc" else
-    #     sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True),
-    #     sg.CalendarButton("CALENDÁRIO", font=('Arial Bold', 7), 
-    #       close_when_date_chosen=True, target=f"-{k.upper()}-", format='%Y-%m-%d', size=13)
-    # ] for k, v in self.dic.items() if k != "id"])
-
     return content
   
   # retorna vazio para desativar a gravação padrão e controlar em controller_helper

@@ -19,7 +19,6 @@ class ProfissionalSave(Save):
       if k != "tipo" else
         sg.Combo(["médico", "dentista", "veterinário"], default_value=v, key=f"-{k.upper()}-", size=44)
     ] for k, v in self.dic.items() if k != "id"])
-
     return content
   
   # retorna vazio para desativar a gravação padrão e controlar em controller_helper
