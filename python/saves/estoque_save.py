@@ -4,19 +4,24 @@ from save import sg, ut, Save
 class EstoqueSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    item = self.model.medicamento.find(self.dic["medicamento_id"]) if self.dic["medicamento_id"] != "" else { "nome": "" }
+    # valor inicial de medicamento
+    med = self.model.medicamento.find(self.dic["medicamento_id"]) if self.dic["medicamento_id"] != "" else { "nome": "" }
+
     content = []
     for k, v in self.dic.items():
       if k in ["quant_venda", "quant_atual"]: continue
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
-      if k in ["data", "validade"]: 
-        aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True))
-        aux.append(sg.CalendarButton("CALENDÁRIO", size=13, font=('Arial Bold', 7), close_when_date_chosen=True, 
-          target=f"-{k.upper()}-", format='%Y-%m-%d', default_date_m_d_y=(v.month, v.day, v.year)))
-      elif k == "medicamento_id":
-        aux.append(sg.Combo([opcao[0] for opcao in self.model.medicamento.select(cols="nome")], default_value=item["nome"], key=f"-{k.upper()}-", size=44))
+
+      if k == "medicamento_id":
+        opc = [opcao[0] for opcao in self.model.medicamento.select(cols="nome")]
+        aux.append(sg.Combo(opc, default_value=med["nome"], key=f"-{k.upper()}-", size=44))
+      elif k in ["data", "validade"]: 
+        inp, cal = ut.calendario(k, v)
+        aux.append(inp)
+        aux.append(cal)
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
+
       content.append(aux)
     return content
   

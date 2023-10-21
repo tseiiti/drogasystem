@@ -4,21 +4,25 @@ from save import sg, ut, Save
 class ProfissionalSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
-
     # atributos pessoa
+    self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
     content = [[
       sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))
     ] for k, v in self.pessoa.items()]
     
     # atributos profissional
-    content.extend([[
-      sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
-      sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))
-      if k != "tipo" else
-        sg.Combo(["médico", "dentista", "veterinário"], default_value=v, key=f"-{k.upper()}-", size=44)
-    ] for k, v in self.dic.items() if k != "id"])
+    for k, v in self.dic.items():
+      if k == "id": continue
+      aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
+
+      if k == "tipo":
+        opc = ["médico", "dentista", "veterinário"]
+        aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
+      else:
+        aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
+
+      content.append(aux)
     return content
   
   # retorna vazio para desativar a gravação padrão e controlar em controller_helper

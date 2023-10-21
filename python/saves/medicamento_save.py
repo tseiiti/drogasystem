@@ -4,20 +4,27 @@ from save import sg, ut, Save
 class MedicamentoSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    item = self.model.laboratorio.find(self.dic["laboratorio_id"]) if self.dic["laboratorio_id"] != "" else { "nome": "" }
+    # valor inicial de laboratório
+    lab = self.model.laboratorio.find(self.dic["laboratorio_id"]) if self.dic["laboratorio_id"] != "" else { "nome": "" }
+
     content = []
     for k, v in self.dic.items():
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
+      
       if k == "laboratorio_id":
-        aux.append(sg.Combo([opcao[0] for opcao in self.model.laboratorio.select(cols="nome")], default_value=item["nome"], key=f"-{k.upper()}-", size=44))
+        aux.append(sg.Combo([opcao[0] for opcao in self.model.laboratorio.select(cols="nome")], default_value=lab["nome"], key=f"-{k.upper()}-", size=44))
       elif k == "apresentacao":
-        aux.append(sg.Combo(["sólido", "liquido", "semissólido"], default_value=v, key=f"-{k.upper()}-", size=44))
+        opc = ["sólido", "liquido", "semissólido"]
+        aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "tipo":
-        aux.append(sg.Combo(["genérico", "similar", "referência"], default_value=v, key=f"-{k.upper()}-", size=44))
+        opc = ["genérico", "similar", "referência"]
+        aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "controle":
-        aux.append(sg.Combo(["não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"], default_value=v, key=f"-{k.upper()}-", size=44))
+        opc = ["não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"]
+        aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
+
       content.append(aux)
     return content
   

@@ -50,3 +50,10 @@ class Util:
       justification="center"
     )
   
+  def calendario(k, v):
+    d = (v.month, v.day, v.year) if v else ""
+    inp = sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True)
+    cal = sg.CalendarButton("CALENDÁRIO", size=13, font=('Arial Bold', 7), close_when_date_chosen=True, 
+            target=f"-{k.upper()}-", format='%Y-%m-%d', default_date_m_d_y=d)
+    return inp, cal
+  

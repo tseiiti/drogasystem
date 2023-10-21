@@ -4,9 +4,8 @@ from save import sg, ut, Save
 class ClienteSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
-
     # atributos pessoa
+    self.pessoa = self.model.pessoa.find(self.dic['id'] or 0)
     content = [[
       sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14), 
       sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id"))
@@ -16,14 +15,18 @@ class ClienteSave(Save):
     for k, v in self.dic.items():
       if k == "id": continue
       aux = [sg.Text(text=f"{ut.corretor(k, title=True)}: ", size=14)]
-      if k == "data_nasc": 
-        aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True))
-        aux.append(sg.CalendarButton("CALENDÁRIO", size=13, font=('Arial Bold', 7), close_when_date_chosen=True, 
-          target=f"-{k.upper()}-", format='%Y-%m-%d', default_date_m_d_y=(v.month, v.day, v.year)))
+
+      if k == "data_nasc":
+        inp, cal = ut.calendario(k, v)
+        aux.append(inp)
+        aux.append(cal)
       elif k == "sexo":
-        aux.append(sg.Combo(["Masculino", "Feminino"], default_value="Masculino" if v == "M" else "Feminino", key=f"-{k.upper()}-", size=44))
+        opc = ["Masculino", "Feminino"]
+        d = "Masculino" if v == "M" else "Feminino"
+        aux.append(sg.Combo(opc, default_value=d, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
+
       content.append(aux)
     return content
   
