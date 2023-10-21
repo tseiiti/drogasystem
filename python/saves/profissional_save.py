@@ -33,11 +33,7 @@ class ProfissionalSave(Save):
   def controller_helper(self, event, values):
     if event == " Salvar ":
       profissional = super().get_params(values, self.dic)
-      pessoa = {
-        str(key).replace("-", "").lower(): val 
-        for key, val in values.items() 
-        if str(key).replace("-", "").lower() in self.pessoa.keys()
-      }
+      pessoa = super().get_params(values, self.pessoa)
 
       if pessoa["id"] == "":
         aux = self.model.pessoa.find_by_sql('select max(id) + 1 id from pessoa;')

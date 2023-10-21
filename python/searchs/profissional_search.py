@@ -1,7 +1,7 @@
-from read import ut, Read
+from search import ut, Search
 
-# classe personalizada para listar profissionais
-class ProfissionalRead(Read):
+# classe personalizada para listar profissionals
+class ProfissionalSearch(Search):
   # personaliza atributos da lista
   def set_cols_rows(self):
     sql = "select "

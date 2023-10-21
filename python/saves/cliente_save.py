@@ -21,9 +21,9 @@ class ClienteSave(Save):
         aux.append(inp)
         aux.append(cal)
       elif k == "sexo":
+        v = "Masculino" if v == "M" else "Feminino"
         opc = ["Masculino", "Feminino"]
-        d = "Masculino" if v == "M" else "Feminino"
-        aux.append(sg.Combo(opc, default_value=d, key=f"-{k.upper()}-", size=44))
+        aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
 
@@ -39,11 +39,7 @@ class ClienteSave(Save):
     if event == " Salvar ":
       cliente = super().get_params(values, self.dic)
       cliente["sexo"] = cliente["sexo"][0]
-      pessoa = {
-        str(key).replace("-", "").lower(): val 
-        for key, val in values.items() 
-        if str(key).replace("-", "").lower() in self.pessoa.keys()
-      }
+      pessoa = super().get_params(values, self.pessoa)
 
       if pessoa["id"] == "":
         aux = self.model.pessoa.find_by_sql('select max(id) + 1 id from pessoa;')

@@ -22,7 +22,7 @@ class Save(App):
     
     col1 = [[sg.Image(f'images/{self.model.tname.lower()}_vertical.png')]]
     col2 = [
-      [ut.titulo(f"{'Criar' if self.dic['id'] == '' else 'Atualizar'} {ut.corretor(self.model.tname)}")], 
+      [ut.titulo(f"{'Criar' if self.dic['id'] else 'Atualizar'} {ut.corretor(self.model.tname)}")], 
       [sg.HorizontalSeparator()], 
       *content, 
       [sg.HorizontalSeparator()], 
@@ -38,10 +38,10 @@ class Save(App):
       params = self.get_params(values, self.dic)
       if not params:
         pass
-      elif self.dic["id"] == "":
-        self.error_out(self.model.insert(params))
-      else:
+      elif self.dic["id"]:
         self.error_out(self.model.update(params))
+      else:
+        self.error_out(self.model.insert(params))
 
     self.controller_helper(event, values)
 
