@@ -27,7 +27,7 @@ class Search(App):
       self.set_cols_rows()
       self.window["-TABLE-"].update(values=self.rows)
 
-    elif "+CLICKED+" in event and event[2][0] is not None:
+    elif "+CLICKED+" in event and event[2][0] is not None and event[2][0] > -1:
       self.ret = self.rows[event[2][0]][0], self.rows[event[2][0]][1]
       self.error = "Fechar"
 

@@ -24,7 +24,7 @@ class Read(App):
     if event == " Novo ":
       self.edit(0)
 
-    elif "+CLICKED+" in event and event[2][0] is not None:
+    elif "+CLICKED+" in event and event[2][0] is not None and event[2][0] > -1:
       self.edit(self.rows[event[2][0]][0])
 
   # define o conteúdo da tabela

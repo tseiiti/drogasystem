@@ -7,25 +7,27 @@ from searchs.medicamento_search import MedicamentoSearch
 class VendaSave(Save):
   # personaliza atributos editáveis
   def get_content(self):
-    self.rows = []
-    self.cols = []
+    # títulos das colunas
     sql = "select "
     sql += "medicamento.nome, medicamento.preco, itens_venda.quantidade, "
     sql += "itens_venda.desconto, itens_venda.total "
     sql += "from itens_venda "
     sql += "join medicamento on medicamento.id = itens_venda.medicamento_id "
     self.rows = self.model.find_by_sql(sql + "limit 0")
-    self.cols = self.model.columns()
+    self.cols = [ut.corretor(c) for c in self.model.columns()]
 
+    # valores de consulta
+    self.total_venda = self.dic["total"] if self.dic["total"] else 0.0
+    self.cliente_id = self.dic["cliente_id"]
+    self.profissional_id = self.dic["profissional_id"]
+    cli = self.model.pessoa.find(self.cliente_id)["nome"] if self.cliente_id else ""
+    pro = self.model.pessoa.find(self.profissional_id)["nome"] if self.profissional_id else ""
+
+    # seleciona itens de venda para consulta
     if self.dic["id"]:
       sql += f"where itens_venda.venda_id = {self.dic['id']}"
       sql += "order by 1 "
       self.rows = self.model.find_by_sql(sql)
-
-    self.cliente_id = self.dic["cliente_id"]
-    cli = self.model.pessoa.find(self.dic["cliente_id"])["nome"] if self.dic["cliente_id"] else ""
-    self.profissional_id = self.dic["profissional_id"]
-    pro = self.model.pessoa.find(self.dic["profissional_id"])["nome"] if self.dic["profissional_id"] else ""
 
     content = [
       [
@@ -40,7 +42,7 @@ class VendaSave(Save):
         sg.Text(text="Id: ", size=10), sg.Input(default_text=self.dic["id"], key="-ID-", disabled=True, size=16), 
         sg.Text(text="", size=4), 
         sg.Text(text="Total R$", size=7, font=('Arial Bold', 14)), 
-        sg.Input(default_text=self.dic['total'], key="-TOTAL-", disabled=True, size=14, font=('Arial Bold', 16))
+        sg.Input(default_text=f"{self.total_venda:.2f}", key="-TOTAL-", disabled=True, size=14, font=('Arial Bold', 16))
       ], 
       [sg.HorizontalSeparator()], 
       [sg.Text(font=('Arial', 1))], 
@@ -60,40 +62,95 @@ class VendaSave(Save):
       ], 
       [ut.gen_table(self.rows, self.cols)]
     ]
-    
+
     self.ws = (850, 650)
     return content
   
-  # adiciona atributo personalizado na atualização|
-  def get_params(self, values, dic):
-    params = super().get_params(values, dic)
-    params["cliente_id"] = self.cliente_id
-    params["profissional_id"] = self.profissional_id
-    print(params)
-    # return params
+  # # adiciona atributo personalizado na atualização|
+  # def get_params(self, values, dic):
+  #   params = super().get_params(values, dic)
+  #   params["cliente_id"] = self.cliente_id
+  #   params["profissional_id"] = self.profissional_id
+  #   print(params)
+  #   # return params
 
-  def controller_helper(self, event, values):
-    if event == "CLIENTE":
+  def rem_item(self, item, values):
+    total = float(self.rows[item][4])
+    self.total_venda -= total
+    self.window["-TOTAL-"].update(f"{self.total_venda - total:.2f}")
+    self.rows.pop(item)
+    self.window["-TABLE-"].update(values=self.rows)
+
+  def add_item(self, values):
+    preco = float(self.add["preco"])
+    if not values["-QUANTIDADE-"]:
+      self.window["-QUANTIDADE-"].update("1")
+      quantidade = 1
+    else:
+      quantidade = int(values["-QUANTIDADE-"])
+    if not values["-DESCONTO-PORCENTAGEM-"]:
+      self.window["-DESCONTO-PORCENTAGEM-"].update("0.0")
+      desc_per = 0.0
+    else:
+      desc_per = float(values["-DESCONTO-PORCENTAGEM-"])
+    if not values["-DESCONTO-REAIS-"]:
+      self.window["-DESCONTO-REAIS-"].update("0.0")
+      desc_rea = 0.0
+    else:
+      desc_rea = float(values["-DESCONTO-REAIS-"])
+    if desc_per:
+      desconto = preco * quantidade * desc_per / 100
+    else:
+      desconto = desc_rea
+    total = preco * quantidade - desconto
+
+    self.rows.append((self.add["nome"], f"{preco:.2f}", quantidade, f"{desconto:.2f}", f"{total:.2f}", self.add["id"], self.add["medicamento_id"]))
+    self.window["-TABLE-"].update(values=self.rows)
+
+    self.total_venda += total
+    self.window["-TOTAL-"].update(f"{self.total_venda:.2f}")
+
+  def controller(self, event, values):
+    if event == " Salvar " and not self.dic["id"]:
+    # if event == " Salvar ":
+      venda = self.get_params(values, self.dic)
+      # del venda['id']
+      venda['cliente_id'] = self.cliente_id if self.cliente_id else None
+      venda['profissional_id'] = self.profissional_id if self.profissional_id else None
+      sql = self.model.sql_ins(venda)
+      aux = self.model.find_by_sql('select coalesce(max(id), 0) + 1 as id from venda;')
+      for row in self.rows:
+        dic = {
+          "venda_id": aux[0][0], 
+          "estoque_id": row[5], 
+          "medicamento_id": row[6], 
+          "quantidade": row[2], 
+          "desconto": row[3], 
+          "total": row[4]
+        }
+        sql += self.model.itens_venda.sql_ins(dic)
+      self.error_out(self.model.commit(sql))
+
+    elif event == "CLIENTE" and not self.dic["id"]:
       self.open(ClienteSearch(self.model.cliente))
       if self.ret:
         self.cliente_id = self.ret[0]
         self.window["-CLIENTE_ID-"].update(self.ret[1])
       
-    if event == "PROFISSIONAL":
+    elif event == "PROFISSIONAL" and not self.dic["id"]:
       self.open(ProfissionalSearch(self.model.profissional))
       if self.ret:
         self.profissional_id = self.ret[0]
         self.window["-PROFISSIONAL_ID-"].update(self.ret[1])
       
-    # if event == "SELECIONAR" and not self.dic["id"]:
-    if event == "SELECIONAR":
+    if event == "SELECIONAR" and not self.dic["id"]:
       self.open(MedicamentoSearch(self.model.medicamento))
       if self.ret and self.ret[0]:
-        sql = "select "
-        sql += "concat(laboratorio.nome, ', ', medicamento.nome, ' ', medicamento.dosagem"
-        sql += ", '\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle"
-        sql += ", '\n', medicamento.apresentacao, ', ', medicamento.quantidade"
-        sql += ", '\nR$ ', medicamento.preco) as descricao, "
+        sql = "select estoque.id, estoque.medicamento_id, "
+        sql += "concat(laboratorio.nome, ', ', medicamento.nome, ' ', medicamento.dosagem, "
+        sql += "'\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle, "
+        sql += "'\n', medicamento.apresentacao, ', ', medicamento.quantidade, "
+        sql += "'\npreço unitário: R$ ', medicamento.preco) as descricao, "
         sql += "medicamento.nome, medicamento.preco, estoque.lote, estoque.quant_atual "
         sql += "from medicamento "
         sql += "join laboratorio on laboratorio.id = medicamento.laboratorio_id "
@@ -103,22 +160,25 @@ class VendaSave(Save):
         rows = self.model.find_by_sql(sql)
         cols = self.model.columns()
         self.add = ut.gen_dict(cols, rows[0])
+        self.window["-QUANTIDADE-"].update("1")
         self.window["-SAIDA-"].update(self.add['descricao'])
         self.window["-COLUNA-ESQUERDA-"].update(visible=True)
         self.window["-COLUNA-DIREITA-"].update(visible=True)
         self.window["ADICIONAR"].update(visible=True)
     
-    if event == "ADICIONAR":
-      preco = float(self.add["preco"])
-      quantidade = int(values["-QUANTIDADE-"])
-      desc_per = float(values["-DESCONTO-PORCENTAGEM-"])
-      desc_rea = float(values["-DESCONTO-REAIS-"])
-      if desc_per:
-        desconto = preco * quantidade * desc_per / 100
-      else:
-        desconto = desc_rea
-      total = preco * quantidade - desconto
+    elif event == "ADICIONAR" and not self.dic["id"]:
+      item = -1
+      for i in range(len(self.rows)):
+        if self.rows[i][6] == self.add["medicamento_id"]:
+          item = i
+          layout = [
+            [sg.Text(f"Deseja substituir o item \"{self.rows[i][0]}\"?")], 
+            [sg.Button(" Sim "), sg.Button(" Não ")]
+          ]
+          if sg.Window("Confirme", layout).read(close=True)[0] == " Sim ":
+            self.rem_item(i, values)
+            item = -1
+      if item == -1: self.add_item(values)
 
-      self.rows.append((self.add["nome"], f"{preco:.2f}", quantidade, f"{desconto:.2f}", f"{total:.2f}", self.add["quant_atual"]))
-      self.window["-TABLE-"].update(values=self.rows)
-      
+    elif "+CLICKED+" in event and event[2][0] is not None and event[2][0] > -1 and not self.dic["id"]:
+      self.rem_item(event[2][0], values)
