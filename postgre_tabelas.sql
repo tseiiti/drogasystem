@@ -3,15 +3,15 @@
 -- drop database if exists drogasystem;
 -- create database drogasystem;
 
-drop table if exists itens_venda;
-drop table if exists venda;
-drop table if exists profissional;
-drop table if exists cliente;
-drop table if exists pessoa;
-drop table if exists estoque_total;
-drop table if exists estoque;
-drop table if exists medicamento;
-drop table if exists laboratorio;
+drop table if exists laboratorio cascade;
+drop table if exists medicamento cascade;
+drop table if exists estoque cascade;
+drop table if exists estoque_total cascade;
+drop table if exists pessoa cascade;
+drop table if exists cliente cascade;
+drop table if exists profissional cascade;
+drop table if exists venda cascade;
+drop table if exists itens_venda cascade;
 
 create table laboratorio (
   id              serial primary key, 

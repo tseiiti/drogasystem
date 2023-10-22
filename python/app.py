@@ -15,7 +15,7 @@ class App:
   def run(self):
     sg.set_options(font=("Arial", 12))
     self.view()
-
+    self.ret = ""
     self.error = ""
     while True:
       event, values = self.window.read()
@@ -26,11 +26,12 @@ class App:
       if self.error == "Fechar": break
       
     self.window.close()
+    return self.ret
 
   # método auxiliar que esconde a tela atual ao chamar outra tela
   def open(self, win):
     self.window.Hide()
-    win.run()
+    self.ret = win.run()
     self.window.UnHide()
   
   # método auxiliar para apresentar erro em formulário
