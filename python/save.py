@@ -16,10 +16,8 @@ class Save(App):
 
   # define os componentes da tela
   def view(self):
-    self.ws = (812, 560)
+    self.win_size = (812, 560)
     content = self.get_content()
-    btns = [sg.Button(" Voltar "), sg.Button(" Salvar ")]
-    if self.add_extra_button(): btns.append(self.add_extra_button())
     
     col1 = [[sg.Image(f'images/{self.model.tname.lower()}_vertical.png')]]
     col2 = [
@@ -28,10 +26,10 @@ class Save(App):
       *content, 
       [sg.HorizontalSeparator()], 
       [sg.Text(font=('Arial', 1))], 
-      btns]
+      self.add_buttons()]
     
     layout = [[sg.Column(col1), sg.Column(col2, vertical_alignment='top')]]
-    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.ws)
+    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.win_size)
     
   # define ações e regras da tela
   def controller(self, event, values):
@@ -54,9 +52,9 @@ class Save(App):
       if str(key).replace("-", "").lower() in dic.keys()
     }
 
-  # método auxiliar para inserir botões extra na tela
-  def add_extra_button(self):
-    return None
+  # método para inserir botões extra na tela
+  def add_buttons(self):
+    return [sg.Button(" Voltar "), sg.Button(" Salvar ")]
   
   # método abstract opcional de ações e regras
   def controller_helper(self, event, values):

@@ -63,16 +63,111 @@ class VendaSave(Save):
       [ut.gen_table(self.rows, self.cols)]
     ]
 
-    self.ws = (850, 650)
+    self.win_size = (850, 650)
     return content
-  
-  # # adiciona atributo personalizado na atualização|
-  # def get_params(self, values, dic):
-  #   params = super().get_params(values, dic)
-  #   params["cliente_id"] = self.cliente_id
-  #   params["profissional_id"] = self.profissional_id
-  #   print(params)
-  #   # return params
+
+  def controller(self, event, values):    
+    # if event in (" Salvar ", "CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
+    if event in ("CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
+        sg.popup("Não é possível alterar uma venda")
+
+    elif event == " Salvar ":
+      # cria insert da venda
+      venda = self.get_params(values, self.dic)
+      venda['cliente_id'] = self.cliente_id if self.cliente_id else None
+      venda['profissional_id'] = self.profissional_id if self.profissional_id else None
+      sql = self.model.sql_ins(venda)
+
+      # projeta o id da venda para inserts dos itens
+      aux = self.model.find_by_sql('select coalesce(max(id), 0) + 1 as id from venda;')
+
+      for row in self.rows:
+        # cria inserts dos itens de venda
+        dic = {
+          "venda_id": aux[0][0], 
+          "estoque_id": row[5], 
+          "medicamento_id": row[6], 
+          "quantidade": row[2], 
+          "desconto": row[3], 
+          "total": row[4]
+        }
+        sql += self.model.itens_venda.sql_ins(dic)
+
+        # cria updates do estoque
+        est = self.model.estoque.find(row[5])
+        dic = {
+          "id": row[5],
+          "quant_venda": est["quant_venda"] + row[2], 
+          "quant_atual": est["quant_atual"] - row[2]
+        }
+        sql += self.model.estoque.sql_upd(dic)
+
+        # cria updates do total do estoque
+        tot = self.model.estoque_total.where(f"medicamento_id = {row[6]}", "id, total")[0]
+        dic = {
+          "id": tot[0],
+          "total": tot[1] - row[2]
+        }
+        sql += self.model.estoque_total.sql_upd(dic)
+      
+      print(sql)
+
+      if self.total_venda > 0:
+        self.error_out(self.model.commit(sql))
+      else:
+        sg.popup("Adicione um item de venda")
+
+    elif event == "CLIENTE":
+      self.open(ClienteSearch(self.model.cliente))
+      if self.ret:
+        self.cliente_id = self.ret[0]
+        self.window["-CLIENTE_ID-"].update(self.ret[1])
+      
+    elif event == "PROFISSIONAL":
+      self.open(ProfissionalSearch(self.model.profissional))
+      if self.ret:
+        self.profissional_id = self.ret[0]
+        self.window["-PROFISSIONAL_ID-"].update(self.ret[1])
+      
+    elif event == "SELECIONAR":
+      self.open(MedicamentoSearch(self.model.medicamento))
+      if self.ret and self.ret[0]:
+        sql = "select estoque.id, estoque.medicamento_id, "
+        sql += "concat(laboratorio.nome, ', ', medicamento.nome, ' ', medicamento.dosagem, "
+        sql += "'\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle, "
+        sql += "'\n', medicamento.apresentacao, ', ', medicamento.quantidade, "
+        sql += "'\npreço unitário: R$ ', medicamento.preco) as descricao, "
+        sql += "medicamento.nome, medicamento.preco, estoque.lote, estoque.quant_atual "
+        sql += "from medicamento "
+        sql += "join laboratorio on laboratorio.id = medicamento.laboratorio_id "
+        sql += "join estoque on estoque.medicamento_id = medicamento.id "
+        sql += "where estoque.quant_atual > 0 "
+        sql += f"and estoque.id = {self.ret[0]}"
+        rows = self.model.find_by_sql(sql)
+        cols = self.model.columns()
+        self.add = ut.gen_dict(cols, rows[0])
+        self.window["-QUANTIDADE-"].update("1")
+        self.window["-SAIDA-"].update(self.add['descricao'])
+        self.window["-COLUNA-ESQUERDA-"].update(visible=True)
+        self.window["-COLUNA-DIREITA-"].update(visible=True)
+        self.window["ADICIONAR"].update(visible=True)
+    
+    elif event == "ADICIONAR":
+      item = -1
+      for i in range(len(self.rows)):
+        if self.rows[i][6] == self.add["medicamento_id"]:
+          item = i
+          layout = [
+            [sg.Text(f"Deseja substituir o item \"{self.rows[i][0]}\"?")], 
+            [sg.Button(" Sim "), sg.Button(" Não ")]
+          ]
+          if sg.Window("Confirme", layout).read(close=True)[0] == " Sim ":
+            self.rem_item(i, values)
+            item = -1
+      if item == -1: self.add_item(values)
+
+    elif "+CLICKED+" in event and event[2][0] is not None and event[2][0] > -1 and not self.dic["id"]:
+      self.rem_item(event[2][0], values)
 
   def rem_item(self, item, values):
     total = float(self.rows[item][4])
@@ -110,75 +205,9 @@ class VendaSave(Save):
     self.total_venda += total
     self.window["-TOTAL-"].update(f"{self.total_venda:.2f}")
 
-  def controller(self, event, values):
-    if event == " Salvar " and not self.dic["id"]:
-    # if event == " Salvar ":
-      venda = self.get_params(values, self.dic)
-      # del venda['id']
-      venda['cliente_id'] = self.cliente_id if self.cliente_id else None
-      venda['profissional_id'] = self.profissional_id if self.profissional_id else None
-      sql = self.model.sql_ins(venda)
-      aux = self.model.find_by_sql('select coalesce(max(id), 0) + 1 as id from venda;')
-      for row in self.rows:
-        dic = {
-          "venda_id": aux[0][0], 
-          "estoque_id": row[5], 
-          "medicamento_id": row[6], 
-          "quantidade": row[2], 
-          "desconto": row[3], 
-          "total": row[4]
-        }
-        sql += self.model.itens_venda.sql_ins(dic)
-      self.error_out(self.model.commit(sql))
-
-    elif event == "CLIENTE" and not self.dic["id"]:
-      self.open(ClienteSearch(self.model.cliente))
-      if self.ret:
-        self.cliente_id = self.ret[0]
-        self.window["-CLIENTE_ID-"].update(self.ret[1])
-      
-    elif event == "PROFISSIONAL" and not self.dic["id"]:
-      self.open(ProfissionalSearch(self.model.profissional))
-      if self.ret:
-        self.profissional_id = self.ret[0]
-        self.window["-PROFISSIONAL_ID-"].update(self.ret[1])
-      
-    if event == "SELECIONAR" and not self.dic["id"]:
-      self.open(MedicamentoSearch(self.model.medicamento))
-      if self.ret and self.ret[0]:
-        sql = "select estoque.id, estoque.medicamento_id, "
-        sql += "concat(laboratorio.nome, ', ', medicamento.nome, ' ', medicamento.dosagem, "
-        sql += "'\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle, "
-        sql += "'\n', medicamento.apresentacao, ', ', medicamento.quantidade, "
-        sql += "'\npreço unitário: R$ ', medicamento.preco) as descricao, "
-        sql += "medicamento.nome, medicamento.preco, estoque.lote, estoque.quant_atual "
-        sql += "from medicamento "
-        sql += "join laboratorio on laboratorio.id = medicamento.laboratorio_id "
-        sql += "join estoque on estoque.medicamento_id = medicamento.id "
-        sql += "where estoque.quant_atual > 0 "
-        sql += f"and estoque.id = {self.ret[0]}"
-        rows = self.model.find_by_sql(sql)
-        cols = self.model.columns()
-        self.add = ut.gen_dict(cols, rows[0])
-        self.window["-QUANTIDADE-"].update("1")
-        self.window["-SAIDA-"].update(self.add['descricao'])
-        self.window["-COLUNA-ESQUERDA-"].update(visible=True)
-        self.window["-COLUNA-DIREITA-"].update(visible=True)
-        self.window["ADICIONAR"].update(visible=True)
+  # def add_buttons(self):
+  #   if self.dic["id"]:
+  #     return [sg.Button(" Voltar ")]
+  #   else:
+  #     return [sg.Button(" Voltar "), sg.Button(" Salvar ")]
     
-    elif event == "ADICIONAR" and not self.dic["id"]:
-      item = -1
-      for i in range(len(self.rows)):
-        if self.rows[i][6] == self.add["medicamento_id"]:
-          item = i
-          layout = [
-            [sg.Text(f"Deseja substituir o item \"{self.rows[i][0]}\"?")], 
-            [sg.Button(" Sim "), sg.Button(" Não ")]
-          ]
-          if sg.Window("Confirme", layout).read(close=True)[0] == " Sim ":
-            self.rem_item(i, values)
-            item = -1
-      if item == -1: self.add_item(values)
-
-    elif "+CLICKED+" in event and event[2][0] is not None and event[2][0] > -1 and not self.dic["id"]:
-      self.rem_item(event[2][0], values)

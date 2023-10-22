@@ -10,3 +10,5 @@ class VendaModel(Model):
     self.profissional = Model("Profissional")
     self.medicamento = Model("Medicamento")
     self.itens_venda = Model("Itens_Venda")
+    self.estoque = Model("Estoque")
+    self.estoque_total = Model("Estoque_total")
