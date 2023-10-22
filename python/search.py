@@ -8,21 +8,29 @@ class Search(App):
 
   # define os componentes da tela
   def view(self):
+    self.pesquisar = ""
     self.set_cols_rows()
     self.cols = [ut.corretor(c) for c in self.model.columns()]
     layout = [
       [ut.titulo(f"Lista de {ut.corretor(self.model.tname, plural=True, title=True)}")], 
+      [sg.Text(text="Pesquisar: ", size=14), sg.Input(key="-PESQUISAR-"), sg.Button("ATUALIZAR", size=13, font=('Arial Bold', 7))], 
+      [sg.Text(font=('Arial', 1))], 
       [ut.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar ")]]
     
-    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=(900, 476))
+    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=(700, 476))
     
   # define ações e regras da tela
   def controller(self, event, values):
-    if "+CLICKED+" in event and event[2][0] is not None:
+    if event == "ATUALIZAR":
+      self.pesquisar = values["-PESQUISAR-"]
+      self.set_cols_rows()
+      self.window["-TABLE-"].update(values=self.rows)
+
+    elif "+CLICKED+" in event and event[2][0] is not None:
       self.ret = self.rows[event[2][0]][0], self.rows[event[2][0]][1]
       self.error = "Fechar"
 
   # define o conteúdo da tabela
   def set_cols_rows(self):
-    self.rows = self.model.select()
+    self.rows = self.model.where(self.pesquisar)

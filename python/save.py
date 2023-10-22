@@ -16,6 +16,7 @@ class Save(App):
 
   # define os componentes da tela
   def view(self):
+    self.ws = (812, 560)
     content = self.get_content()
     btns = [sg.Button(" Voltar "), sg.Button(" Salvar ")]
     if self.add_extra_button(): btns.append(self.add_extra_button())
@@ -26,11 +27,11 @@ class Save(App):
       [sg.HorizontalSeparator()], 
       *content, 
       [sg.HorizontalSeparator()], 
-      [sg.Text(key="-SAIDA-", size=(40, 1))], 
+      [sg.Text(font=('Arial', 1))], 
       btns]
-    layout = [[sg.Column(col1), sg.Column(col2, vertical_alignment='top')]]
     
-    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=(812, 524))
+    layout = [[sg.Column(col1), sg.Column(col2, vertical_alignment='top')]]
+    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.ws)
     
   # define ações e regras da tela
   def controller(self, event, values):

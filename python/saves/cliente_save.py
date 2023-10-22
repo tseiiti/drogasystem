@@ -51,3 +51,4 @@ class ClienteSave(Save):
         sql = self.model.pessoa.sql_upd(pessoa)
         sql += self.model.sql_upd(cliente)
       self.error_out(self.model.commit(sql))
+      
