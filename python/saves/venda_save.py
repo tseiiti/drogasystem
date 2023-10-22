@@ -67,8 +67,8 @@ class VendaSave(Save):
     return content
 
   def controller(self, event, values):    
-    # if event in (" Salvar ", "CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
-    if event in ("CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
+    if event in (" Salvar ", "CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
+    # if event in ("CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
         sg.popup("Não é possível alterar uma venda")
 
     elif event == " Salvar ":
@@ -109,8 +109,6 @@ class VendaSave(Save):
           "total": tot[1] - row[2]
         }
         sql += self.model.estoque_total.sql_upd(dic)
-      
-      print(sql)
 
       if self.total_venda > 0:
         self.error_out(self.model.commit(sql))
