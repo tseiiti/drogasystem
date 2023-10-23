@@ -24,13 +24,14 @@ create table medicamento (
   id              serial primary key, 
   laboratorio_id  int not null references laboratorio(id), 
   nome            varchar(255) not null, 
-  dosagem         varchar(255) not null, 
-  apresentacao    varchar(255) not null check (apresentacao in ('sólido', 'liquido', 'semissólido')), 
-  tipo            varchar(255) not null check (tipo in ('genérico', 'similar', 'referência')), 
-  controle        varchar(255) not null check (controle in ('não controlado', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'AM')), 
-  quantidade      varchar(255) not null, 
+  dosagem         varchar(255), 
+  apresentacao    varchar(255) not null check (apresentacao in ('Sólido', 'Líquido', 'Semissólido')), 
+  tipo            varchar(255) not null check (tipo in ('Biológico', 'Específico', 'Fitoterápico', 'Genérico', 'Novo', 'Outros', 'Produto de Terapia Avançada', 'Radiofármaco', 'Similar')), 
+  controle        varchar(255) not null check (controle in ('Não controlado', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'AM')), 
+  quantidade      varchar(255), 
   preco           numeric(10, 2) not null
 );
+
 
 create table estoque (
   id              serial primary key, 
@@ -59,15 +60,15 @@ create table pessoa (
   numero          varchar(255), 
   complemento     varchar(255), 
   bairro          varchar(255), 
-  cep             char(10), 
+  cep             numeric(8), 
   cidade          varchar(255), 
   estado          char(2), 
-  telefone        varchar(255)
+  telefone        numeric(11)
 );
 
 create table cliente (
   id              int primary key references pessoa(id), 
-  cpf             varchar(255) not null unique, 
+  cpf             numeric(11) not null unique, 
   data_nasc       date not null, 
   sexo            char(1) not null check (sexo in ('F', 'M'))
 );
