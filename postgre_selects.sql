@@ -24,6 +24,17 @@ select * from med_bck order by 1;
 select * from est_bck order by 1;
 select * from tot_bck order by 1;
 
+-- insert into laboratorio 
+-- select * from lab_bck where id in (
+--   select laboratorio_id from med_bck where nome in ('AAS', 'ACEBROFILINA', 'ACICLOVIR', 'ADAPALENO', 'ADAPEL', 'AIXA', 'ALBENDAZOL', 'ALLENASAL', 'ALOPURINOL', 'ALPRAZOLAM', 'AMOXICILINA', 'CLONAZEPAM', 'CLORIDRATO DE MEMANTINA', 'CLORIDRATO DE RANITIDINA', 'ELOCTATE', 'ELPROLIX', 'GLUCANTIME', 'LEMTRADA', 'MYOZYME', 'NASACORT', 'NEOZINE', 'NEXVIAZYME', 'OSCAL D', 'PLASIL', 'PRALUENT', 'SOCIAN', 'THYROGEN', 'URBANIL', 'XENPOZYME')
+-- );
+
+-- insert into medicamento 
+-- select * from med_bck where nome in ('AAS', 'ACEBROFILINA', 'ACICLOVIR', 'ADAPALENO', 'ADAPEL', 'AIXA', 'ALBENDAZOL', 'ALLENASAL', 'ALOPURINOL', 'ALPRAZOLAM', 'AMOXICILINA', 'CLONAZEPAM', 'CLORIDRATO DE MEMANTINA', 'CLORIDRATO DE RANITIDINA', 'ELOCTATE', 'ELPROLIX', 'GLUCANTIME', 'LEMTRADA', 'MYOZYME', 'NASACORT', 'NEOZINE', 'NEXVIAZYME', 'OSCAL D', 'PLASIL', 'PRALUENT', 'SOCIAN', 'THYROGEN', 'URBANIL', 'XENPOZYME')
+-- ;
+
+
+
 -- drop table lab_bck;
 -- drop table med_bck;
 -- drop table est_bck;
