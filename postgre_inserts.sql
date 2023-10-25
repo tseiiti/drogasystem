@@ -1106,10 +1106,9 @@ insert into estoque_total (medicamento_id, total) values (19779, 30);
 insert into estoque (medicamento_id, lote, data, validade, preco, quant_inicial, quant_atual) values (19780, 'lote 291567', '2023-07-31', '2025-01-31', 7.6, 30, 30); 
 insert into estoque_total (medicamento_id, total) values (19780, 30); 
 insert into estoque (medicamento_id, lote, data, validade, preco, quant_inicial, quant_atual) values (10191, 'lote 792866', '2023-08-02', '2025-02-28', 313.4, 3, 3); 
+update estoque_total set total = total - 3 where medicamento_id = 10191; 
 
 -- vendas, itens de venda
-
-update estoque_total set total = total - 3 where medicamento_id = 10191; 
 insert into venda (cliente_id, profissional_id, time_stamp, total) values (15, 21, '2023-08-02', 864.87); 
 insert into itens_venda (venda_id, medicamento_id, estoque_id, quantidade, desconto, total) values (1, 10191, 209, 1, 36.00, 864.87); 
 update estoque set quant_venda = quant_venda + 1, quant_atual = quant_atual - 1 where id = 209; 
