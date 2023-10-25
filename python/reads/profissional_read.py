@@ -10,4 +10,3 @@ class ProfissionalRead(Read):
     sql += "join profissional on profissional.id = pessoa.id "
     sql += "order by 1"
     self.rows = self.model.find_by_sql(sql)
-    self.cols = [ut.corretor(c) for c in self.model.columns()]

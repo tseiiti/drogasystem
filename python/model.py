@@ -39,8 +39,8 @@ class Model:
 
   # auxiliar insert
   def sql_ins(self, params):
-    col = ", ".join(k for k, v in params.items() if not (k == "id" and v == ""))
-    val = ", ".join(f"'{v}'" for k, v in params.items() if not (k == "id" and v == ""))
+    col = ", ".join(k for k, v in params.items() if not ((k == "id" and v == "") or (v == None)))
+    val = ", ".join(f"'{v}'" for k, v in params.items() if not ((k == "id" and v == "") or (v == None)))
     return f"insert into {self.tn} ({col}) values ({val});"
 
   # insert padrão
@@ -84,7 +84,7 @@ class Model:
       return error
 
     finally:
-      print("SQL:", sql)
+      # print("SQL:", sql)
       if cur: cur.close()
       if con: con.close()
 

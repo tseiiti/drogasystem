@@ -28,7 +28,11 @@ class Util:
   # método auxiliar para trocar textos
   def corretor(texto, plural=False, title=False):
     corrigido = dc[texto.lower()] if texto.lower() in dc else texto
-    if plural: corrigido += 's'
+    if plural:
+      if corrigido[-1] == "l":
+        corrigido = corrigido[:-1] + "is"
+      else:
+        corrigido += 's'
     if title: corrigido = corrigido.title()
     return corrigido
   
@@ -45,4 +49,11 @@ class Util:
       expand_x=True, 
       justification="center"
     )
+  
+  def calendario(k, v):
+    d = (v.month, v.day, v.year) if v else ""
+    inp = sg.Input(default_text=v, key=f"-{k.upper()}-", size=32, disabled=True)
+    cal = sg.CalendarButton("CALENDÁRIO", size=13, font=('Arial Bold', 7), close_when_date_chosen=True, 
+            target=f"-{k.upper()}-", format='%Y-%m-%d', default_date_m_d_y=d)
+    return inp, cal
   
