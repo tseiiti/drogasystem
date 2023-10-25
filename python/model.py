@@ -84,7 +84,7 @@ class Model:
       return error
 
     finally:
-      print("SQL:", sql)
+      # print("SQL:", sql)
       if cur: cur.close()
       if con: con.close()
 
