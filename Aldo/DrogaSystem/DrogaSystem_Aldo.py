@@ -1,89 +1,6 @@
 import PySimpleGUI as sg
-import psycopg2
-
-
-
-con = psycopg2.connect(host="localhost", database="drogasystem", user="oscar", password="oscar")
-
-
-def laboratorio():
-
-    largura = 10
-    altura = 3
-    layout = [
-                [sg.Table([['','',''],['','','']], ['Nome','Razão Social','CNPJ'], num_rows=4, key = '-TabLab-')],
-                [[sg.Text('Busca por laboratórios: '), sg.Input(key = '-in_lab-')],
-                [sg.Button("Pesquisar", size = (largura,altura), key = '-pesquisa_lab-'),
-                sg.Button("Listar", size = (largura,altura), key = '-lista_lab-'),
-                  sg.Button("Sair", size = (largura,altura), key = '-sair_lab-')]]
-            ]
-
-    # Crio a janela
-    window = sg.Window("Laboratório", layout, size = (710,450))
-
-    while True:
-                # aqui eu leio os eventos que talvez estejam ocorrendo
-        evento, valores = window.read()
-        # se você apertar o botão OK o programa finaliza
-        if evento == sg.WIN_CLOSED:
-            break
-        elif evento == "-sair_lab-":
-            break
-        elif evento == '-lista_lab-':
-            with con:
-                with con.cursor() as cursor:
-                    cursor.execute("SELECT nome, razao, cnpj FROM laboratorio")
-                    resposta = cursor.fetchall()
-                    dado =[]
-                    dado_linha = []
-                    for linha in range(len(resposta)):                 
-                        for col in range(len(resposta[0])):
-                            dado_linha.append(resposta[linha][col])
-                        dado.append(dado_linha)
-                        dado_linha = []
-
-
-                    print(dado)
-                    window.close()
-                    largura = 10
-                    altura = 3
-                    layout = [
-
-                                [[sg.Table(dado, ['Nome','Razão Social','CNPJ'], num_rows=4, key = '-TabLab-')],
-                                [sg.Text('Busca por laboratórios: '), sg.Input(key = '-in_lab-')],
-                                [sg.Button("Pesquisar", size = (largura,altura), key = '-pesquisa_lab-'),
-                                sg.Button("Listar", size = (largura,altura), key = '-lista_lab-'),
-                                sg.Button("Sair", size = (largura,altura), key = '-sair_lab-')]]
-                            ]
-                    window = sg.Window("Laboratório", layout, size = (710,450))
-
-
-        elif evento == '-pesquisa_lab-':
-            with con:
-                with con.cursor() as cursor:
-                    cursor.execute("SELECT nome, razao, cnpj FROM laboratorio WHERE razao LIKE %s ;",
-                        ('%' +valores['-in_lab-'] + '%',))
-                    resposta = cursor.fetchall()
-                    dado = []
-                    dado_linha = []
-                    for linha in range(len(resposta)):                 
-                        for col in range(len(resposta[0])):
-                            dado_linha.append(resposta[linha][col])
-                        dado.append(dado_linha)
-                        dado_linha = []
-                    window.close()
-
-                    largura = 10
-                    altura = 3
-                    layout = [
-                                [[sg.Table(dado, ['Nome','Razão Social','CNPJ'], num_rows=4, key = '-TabLab-')],
-                                [sg.Text('Busca por laboratórios: '), sg.Input(key = '-in_lab-')],
-                                [sg.Button("Pesquisar", size = (largura,altura), key = '-pesquisa_lab-'),
-                                sg.Button("Listar", size = (largura,altura), key = '-lista_lab-'),
-                                sg.Button("Sair", size = (largura,altura), key = '-sair_lab-')]]
-                            ]
-                    window = sg.Window("Laboratório", layout, size = (710,450))
-    window.close()
+from conexao  import con
+from laboratorio import laboratorio
 
     
 def cliente():
@@ -94,7 +11,7 @@ def cliente():
                 [[sg.Text('Busca por cliente: '), sg.Input(key = '-in_cli-')],
                 [sg.Button("Pesquisar", size = (largura,altura), key = '-pesquisa_cli-'),
                 sg.Button("Listar", size = (largura,altura), key = '-lista_cli-'),
-                  sg.Button("Sair", size = (largura,altura), key = '-sair_cli-')]]
+                  sg.Button("Sair" , size = (largura,altura), key = '-sair_cli-')]]
             ]
     window = sg.Window('Clientes', layout, size = (710, 450))
 
