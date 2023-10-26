@@ -14,13 +14,13 @@ class MedicamentoSave(Save):
         self.labs = [e for e in self.model.laboratorio.select(cols="id, nome")]
         aux.append(sg.Combo([e[1] for e in self.labs], default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "apresentacao":
-        opc = ["sólido", "liquido", "semissólido"]
+        opc = ["Sólido", "Líquido", "Semissólido"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "tipo":
-        opc = ["genérico", "similar", "referência"]
+        opc = ["Genérico", "Similar", "Referência"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "controle":
-        opc = ["não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"]
+        opc = ["Não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))

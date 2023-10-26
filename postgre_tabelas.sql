@@ -76,7 +76,7 @@ create table cliente (
 create table profissional (
   id              int primary key references pessoa(id), 
   registro        varchar(255) not null unique, 
-  tipo            varchar(255) not null check (tipo in ('médico', 'dentista', 'veterinário'))
+  tipo            varchar(255) not null check (tipo in ('Médico', 'Dentista', 'Veterinário'))
 );
 
 create table venda (

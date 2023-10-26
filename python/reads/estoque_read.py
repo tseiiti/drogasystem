@@ -8,5 +8,14 @@ class EstoqueRead(Read):
     sql += "estoque.id, medicamento.nome as medicamento, estoque.quant_atual, estoque.preco, estoque.validade "
     sql += "from estoque "
     sql += "join medicamento on medicamento.id = estoque.medicamento_id "
+
+    if self.pesquisar:
+      sql += "where ( "
+      sql += f"cast(estoque.id as varchar) ilike '%{self.pesquisar}%' "
+      sql += f"or medicamento.nome ilike '%{self.pesquisar}%' "
+      sql += f"or cast(estoque.preco as varchar) ilike '%{self.pesquisar}%' "
+      sql += f"or cast(estoque.validade as varchar) ilike '%{self.pesquisar}%' "
+      sql += " ) "
+
     sql += "order by 1"
     self.rows = self.model.find_by_sql(sql)

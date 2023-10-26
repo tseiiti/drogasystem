@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from python.model import Model
+from model import Model
 
 model = Model()
 
@@ -15,8 +15,7 @@ model = Model()
 def exec(sql):
   print(sql)
   ret = model.commit(sql)
-  if ret != "Fechar":
-    print(ret)
+  if ret != "Fechar": print(ret)
 
 def estoque(dat, med_id, preco, fval, fpre):
   # lote
@@ -33,28 +32,39 @@ def estoque(dat, med_id, preco, fval, fpre):
 
   # quantidade comprada
   if preco > 600:
-    qtd = random.randrange(3, 7, 3)
+    qtd = random.randrange(2, 7, 2)
   elif preco > 300:
-    qtd = random.randrange(5, 11, 5)
+    qtd = random.randrange(3, 10, 3)
   elif preco > 100:
-    qtd = random.randrange(5, 31, 5)
+    qtd = random.randrange(5, 16, 5)
   elif preco > 40:
-    qtd = random.randrange(2, 5) * 10
+    qtd = random.randrange(2, 20, 4)
   else:
-    qtd = random.randrange(3, 13) * 10
+    qtd = random.randrange(3, 49, 4)
 
   sql = "insert into estoque (medicamento_id, lote, data, validade, preco, quant_inicial, quant_atual) "
-  sql += f"values ({med_id}, 'lote {lot}', '{dat}', '{val}', {pre}, {qtd}, {qtd}); "
+  sql += f"values ({med_id}, 'lote {lot}', '{dat}', '{val}', {pre}, {qtd}, {qtd}); \n"
 
   if model.find_by_sql(f"select count(*) from estoque_total where medicamento_id = {med_id}; ")[0][0] == 0:
-    sql += f"insert into estoque_total (medicamento_id, total) values ({med_id}, {qtd}); "
+    if preco > 400:
+      min = 3
+    elif preco > 100:
+      min = 5
+    else:
+      min = 10
+    sql += f"insert into estoque_total (medicamento_id, total, minimo) values ({med_id}, {qtd}, {min}); "
   else:
-    sql += f"update estoque_total set total = total - {qtd} where medicamento_id = {med_id}; "
+    sql += f"update estoque_total set total = total + {qtd} where medicamento_id = {med_id}; "
     
-  exec(sql)
+  return sql
+
+
 
 def venda(clis, pros, dat, venda_id):
   sql = ""
+  sql1 = ""
+  sql2 = ""
+  sql3 = ""
   total = 0
 
   # cliente e profissional
@@ -65,8 +75,10 @@ def venda(clis, pros, dat, venda_id):
 
   # produtos em estoque
   s = "select estoque.id, estoque.medicamento_id, estoque.quant_atual, medicamento.preco, medicamento.controle, "
-  s += "estoque.preco, estoque.data, estoque.validade from estoque "
-  s += "inner join medicamento on medicamento.id = estoque.medicamento_id where quant_atual > 0 order by 1;"
+  s += "estoque.preco, estoque.data, estoque.validade, estoque_total.minimo from estoque "
+  s += "inner join medicamento on medicamento.id = estoque.medicamento_id "
+  s += "inner join estoque_total on estoque_total.medicamento_id = estoque.medicamento_id "
+  s += "where quant_atual > 0 order by 1;"
   ests = model.find_by_sql(s)
 
   # quantidade de itens da venda
@@ -87,36 +99,43 @@ def venda(clis, pros, dat, venda_id):
       pro = str(pros[random.randrange(len(pros))][0])
 
     # quantidade do produto
-    qtd_vnd = random.randrange(3) + 1
+    if preco > 200:
+      qtd_vnd = random.randrange(3) + 1
+    elif preco > 50:
+      qtd_vnd = random.randrange(5) + 1
+    else:
+      qtd_vnd = random.randrange(10) + 1
     if qtd_vnd > qtd_atu:
       qtd_vnd = qtd_atu
 
-    # reposição do estoque
-    if qtd_atu < 10:
-      pr = ests[p][3]
-      fval = (ests[p][7] - ests[p][6]).days / 30
-      fpre = float(ests[p][3] / ests[p][5])
-      estoque(dat.date(), med_id, pr, fval, fpre)
-
-    # desconto para cliente de até 20% e 10% de chance dar desconto para não cliente até 5%
+    # desconto para cliente de até 40% e 10% de chance dar desconto para não cliente até 10%
     desc = 0
     if cli:
-      desc = qtd_vnd * preco * random.randrange(20) / 100
+      desc = qtd_vnd * preco * random.randrange(40) / 100
       desc = int(desc * 10) / 10
     elif random.randrange(10) > 0:
-      desc = qtd_vnd * preco * random.randrange(5) / 100
+      desc = qtd_vnd * preco * random.randrange(10) / 100
       desc = int(desc * 10) / 10
 
     # totais
     tot = qtd_vnd * preco - desc
     total += tot
 
-    sql += "insert into itens_venda (venda_id, medicamento_id, estoque_id, quantidade, desconto, total) "
-    sql += f"values ({venda_id}, {med_id}, {est_id}, {qtd_vnd}, {desc:.2f}, {tot:.2f}); "
-    sql += f"update estoque set quant_venda = quant_venda + {qtd_vnd}, quant_atual = quant_atual - {qtd_vnd} where id = {est_id}; "
-    sql += f"update estoque_total set total = total - {qtd_vnd} where medicamento_id = {med_id}; "
+    sql1 += "insert into itens_venda (venda_id, medicamento_id, estoque_id, quantidade, desconto, total) "
+    sql1 += f"values ({venda_id}, {med_id}, {est_id}, {qtd_vnd}, {desc:.2f}, {tot:.2f}); \n"
+    sql1 += f"update estoque set quant_venda = quant_venda + {qtd_vnd}, quant_atual = quant_atual - {qtd_vnd} where id = {est_id}; \n"
+    sql1 += f"update estoque_total set total = total - {qtd_vnd} where medicamento_id = {med_id}; \n"
+
+    # reposição do estoque
+    if qtd_atu < ests[p][8]:
+      pr = ests[p][3]
+      fval = (ests[p][7] - ests[p][6]).days / 30
+      fpre = float(ests[p][3] / ests[p][5])
+      sql2 += estoque(dat.date(), med_id, pr, fval, fpre) + "\n"
   
-  sql = f"insert into venda ({'cliente_id, ' if cli else ''}{'profissional_id, ' if pro else ''}time_stamp, total) values ({cli + ', ' if cli else ''}{pro + ', ' if pro else ''}'{dat.date()}', {total:.2f}); " + sql
+  sql3 = f"insert into venda ({'cliente_id, ' if cli else ''}{'profissional_id, ' if pro else ''}time_stamp, total) "
+  sql3 += f"values ({cli + ', ' if cli else ''}{pro + ', ' if pro else ''}'{dat}', {total:.2f}); \n"
+  sql = sql3 + sql1 + sql2
   exec(sql)
 
 
@@ -124,6 +143,7 @@ def venda(clis, pros, dat, venda_id):
 ###############################################################################
 # Estoque Inicial
 if model.find_by_sql(f"select count(*) from estoque;")[0][0] == 0:
+  print("\n-- estoque inicial")
   # nomes = ['AAS', 'ACEBROFILINA', 'ACICLOVIR', 'ADAPALENO', 'ADAPEL', 'AIXA', 'ALBENDAZOL', 'ALLENASAL', 'ALOPURINOL', 'ALPRAZOLAM', 'AMOXICILINA', 'CLONAZEPAM', 'CLORIDRATO DE MEMANTINA', 'CLORIDRATO DE RANITIDINA', 'ELOCTATE', 'ELPROLIX', 'GLUCANTIME', 'LEMTRADA', 'MYOZYME', 'NASACORT', 'NEOZINE', 'NEXVIAZYME', 'OSCAL D', 'PLASIL', 'PRALUENT', 'SOCIAN', 'THYROGEN', 'URBANIL', 'XENPOZYME']
   nomes = ['AAS', 'ACEBROFILINA', 'ALOPURINOL', 'CLORIDRATO DE MEMANTINA', 'CLORIDRATO DE RANITIDINA', 'ELOCTATE', 'ELPROLIX', 'GLUCANTIME', 'LEMTRADA', 'MYOZYME', 'NASACORT', 'NEOZINE', 'NEXVIAZYME', 'OSCAL D', 'PLASIL', 'PRALUENT', 'SOCIAN', 'THYROGEN', 'URBANIL', 'XENPOZYME']
   # nomes = ['AAS']
@@ -139,12 +159,15 @@ if model.find_by_sql(f"select count(*) from estoque;")[0][0] == 0:
   for med in meds:
     # data da compra
     dat = datetime.strptime('31/07/23', '%d/%m/%y').date()
-    estoque(dat, med[0], med[2], dic[med[1]]["val"], dic[med[1]]["pre"])
+    sql = estoque(dat, med[0], med[2], dic[med[1]]["val"], dic[med[1]]["pre"])
+    exec(sql)
 
 
 
 ##############################################################################
-# Vendas e Estoque
+# Vendas
+print("\n-- vendas, itens de venda")
+
 # possiveis clientes e profissionais
 clis = model.find_by_sql('select id from cliente;')
 pros = model.find_by_sql('select id from profissional;')
@@ -163,8 +186,11 @@ venda_id = model.find_by_sql('select coalesce(max(id), 0) as id from venda;')[0]
 # período de venda
 for i in range(90):
   dat += timedelta(days = 1)
+  dat += timedelta(seconds = random.randrange(36000))
 
   # quantidade de vendas no dia
-  for j in range(random.randrange(5)):
+  qtd_vnd_dia = random.randrange(5)
+  for j in range(qtd_vnd_dia):
     venda_id += 1
+    dat += timedelta(seconds = random.randrange(14000))
     venda(clis, pros, dat, venda_id)
