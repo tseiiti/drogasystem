@@ -47,25 +47,3 @@ class ClienteSave(Save):
         sql += self.model.sql_upd(cliente)
       self.error_out(self.model.commit(sql))
       
-  # # retorna vazio para desativar a gravação padrão e controlar em controller_helper
-  # def get_params(self, values, dic):
-  #   return {}
-
-  # # gravação personalizada
-  # def controller_helper(self, event, values):
-  #   if event == " Salvar ":
-  #     cliente = super().get_params(values, self.dic)
-  #     cliente["sexo"] = cliente["sexo"][0]
-  #     pessoa = super().get_params(values, self.pessoa)
-
-  #     if pessoa["id"] == "":
-  #       aux = self.model.pessoa.find_by_sql('select max(id) + 1 id from pessoa;')
-  #       pessoa["id"] = aux[0][0]
-  #       cliente["id"] = aux[0][0]
-  #       sql = self.model.pessoa.sql_ins(pessoa)
-  #       sql += self.model.sql_ins(cliente)
-  #     else:
-  #       sql = self.model.pessoa.sql_upd(pessoa)
-  #       sql += self.model.sql_upd(cliente)
-  #     self.error_out(self.model.commit(sql))
-      
