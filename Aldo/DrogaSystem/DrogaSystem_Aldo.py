@@ -11,7 +11,7 @@ def cliente():
                 [[sg.Text('Busca por cliente: '), sg.Input(key = '-in_cli-')],
                 [sg.Button("Pesquisar", size = (largura,altura), key = '-pesquisa_cli-'),
                 sg.Button("Listar", size = (largura,altura), key = '-lista_cli-'),
-                  sg.Button("Sair", size = (largura,altura), key = '-sair_cli-')]]
+                  sg.Button("Sair" , size = (largura,altura), key = '-sair_cli-')]]
             ]
     window = sg.Window('Clientes', layout, size = (710, 450))
 
