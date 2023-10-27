@@ -19,7 +19,8 @@ class App:
     self.error = ""
     while True:
       event, values = self.window.read()
-      print(type(self).__name__ + ":", event, values)
+      if event != "-PESQUISAR-":
+        print(type(self).__name__ + ":", event, values)
 
       if event == " Voltar " or event == sg.WIN_CLOSED: break
       self.controller(event, values)
@@ -37,7 +38,6 @@ class App:
   # método auxiliar para apresentar erro em formulário
   def error_out(self, error):
     if error != "Fechar":
-      # self.window["-SAIDA-"].update(error)
       sg.popup(error, title="Erro!")
     self.error = error
 

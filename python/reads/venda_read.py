@@ -18,13 +18,5 @@ class VendaRead(Read):
       sql += f"or cast(profissional.registro as varchar) ilike '%{self.pesquisar}%' "
       sql += " ) "
 
-    sql += "order by 1"
+    sql += "order by 1;"
     self.rows = self.model.find_by_sql(sql)
-
-  # método auxiliar para chamar a tela auxiliar de atualização do registro
-  def edit(self, id):
-    self.save.set_dic(self.model, id)
-    self.open(self.save)
-    self.set_cols_rows()
-    self.window["-TABLE-"].update(values=self.rows)
-    

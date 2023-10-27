@@ -17,5 +17,5 @@ class EstoqueRead(Read):
       sql += f"or cast(estoque.validade as varchar) ilike '%{self.pesquisar}%' "
       sql += " ) "
 
-    sql += "order by 1"
+    sql += "order by 1;"
     self.rows = self.model.find_by_sql(sql)

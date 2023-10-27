@@ -17,7 +17,7 @@ class Read(App):
       [sg.Image(f'images/{self.model.tname.lower()}_horizontal.png')], 
       [ut.titulo(f"Lista de {ut.corretor(self.model.tname, plural=True, title=True)}")], 
       [sg.HorizontalSeparator()], 
-      [sg.Text(text="Pesquisar: ", size=14), sg.Input(key="-PESQUISAR-"), sg.Button("ATUALIZAR", size=13, font=('Arial Bold', 7))], 
+      [sg.Text(text="Pesquisar: ", size=14), sg.Input(key="-PESQUISAR-", enable_events=True), sg.Button("ATUALIZAR", size=13, font=('Arial Bold', 7))], 
       [sg.HorizontalSeparator()], 
       [sg.Text(font=('Arial', 1))], 
       [ut.gen_table(self.rows, self.cols)], 
@@ -30,7 +30,7 @@ class Read(App):
     if event == " Novo ":
       self.edit(0)
 
-    elif event == "ATUALIZAR":
+    elif event in ["-PESQUISAR-", "ATUALIZAR"]:
       self.pesquisar = values["-PESQUISAR-"]
       self.set_cols_rows()
       self.window["-TABLE-"].update(values=self.rows)
@@ -40,7 +40,8 @@ class Read(App):
 
   # define o conteúdo da tabela
   def set_cols_rows(self):
-    sql = f"select * from {self.model.tn} order by 1"
+    s = ut.where_pesquisa(self.pesquisar, self.model.columns())
+    sql = f"select * from {self.model.tn} {s} order by 1"
     self.rows = self.model.find_by_sql(sql)
   
   # método auxiliar para chamar a tela auxiliar de atualização do registro

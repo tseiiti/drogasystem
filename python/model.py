@@ -8,6 +8,7 @@ class Model:
   def __init__(self, tname=None):
     self.tname = type(self).__name__.replace("Model", "") if tname is None else tname
     self.tn = self.tname.lower()
+    self.cols = []
 
   # select padrão
   def select(self, cols="*"):

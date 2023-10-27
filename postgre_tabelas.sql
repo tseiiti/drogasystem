@@ -81,7 +81,7 @@ create table profissional (
 
 create table venda (
   id              serial primary key, 
-  time_stamp      timestamp not null default now(), 
+  time_stamp      timestamp not null default cast(to_char(current_timestamp, 'YYYY-MM-DD HH:MI:SS') as timestamp), 
   total           numeric(10, 2) not null, 
   cliente_id      int references cliente(id), 
   profissional_id int references profissional(id)
