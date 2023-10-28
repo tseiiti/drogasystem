@@ -12,14 +12,8 @@ class MedicamentoSearch(Search):
     sql += "join estoque on estoque.medicamento_id = medicamento.id "
     sql += "where estoque.quant_atual > 0 "
 
-    if self.pesquisar:
-      sql += "and ( "
-      sql += f"laboratorio.nome ilike '%{self.pesquisar}%' "
-      sql += f"or medicamento.nome ilike '%{self.pesquisar}%' "
-      sql += f"or medicamento.tipo ilike '%{self.pesquisar}%' "
-      sql += f"or estoque.lote ilike '%{self.pesquisar}%' "
-      sql += f"or cast(medicamento.preco as varchar) ilike '%{self.pesquisar}%' "
-      sql += " ) "
-    
+    cols = ["estoque.id", "laboratorio.nome", "medicamento.nome", "medicamento.tipo", "medicamento.preco", "estoque.lote", "estoque.quant_atual"]
+    aux = ut.where_pesquisa(self.pesquisar, cols, False)
+    if aux: sql += f"and ({aux})"
     sql += "order by 1"
     self.rows = self.model.find_by_sql(sql)

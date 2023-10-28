@@ -57,11 +57,14 @@ class Util:
             target=f"-{k.upper()}-", format='%Y-%m-%d', default_date_m_d_y=d)
     return inp, cal
   
-  def where_pesquisa(pesquisa, columns):
+  def where_pesquisa(pesquisa, columns, with_where=True):
     resultado = ""
-    if pesquisa:
+    if pesquisa and columns:
+      print(columns)
       aux = []
       for col in columns:
         aux.append(f"cast({col} as varchar) ilike '%{pesquisa}%'")
-      resultado = "where " + " or ".join(aux)
+      resultado = " or ".join(aux)
+      if with_where:
+        resultado = f"where {resultado} "
     return resultado

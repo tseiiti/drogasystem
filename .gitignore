@@ -5,5 +5,7 @@ __pycache__/
 anotacoes.txt
 **/teste**
 **copy**
+**conexao**
+conf.py
 
 conf.__pycache__
