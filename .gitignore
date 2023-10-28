@@ -1,6 +1,7 @@
 .vscode
 __pycache__/
 *.architect~
+.~*
 
 anotacoes.txt
 **/teste**
