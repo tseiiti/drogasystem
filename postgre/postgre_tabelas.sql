@@ -1,4 +1,4 @@
--- Active: 1692452936450@@127.0.0.1@5432@drogasystem@public
+-- Active: 1698656816356@@127.0.0.1@5432@drogasystem@public
 
 -- drop database if exists drogasystem;
 -- create database drogasystem;
@@ -24,11 +24,14 @@ create table medicamento (
   id              serial primary key, 
   laboratorio_id  int not null references laboratorio(id), 
   nome            varchar(255) not null, 
+  substancia      varchar(255) not null, 
   dosagem         varchar(255), 
   apresentacao    varchar(255) not null check (apresentacao in ('Sólido', 'Líquido', 'Semissólido')), 
   tipo            varchar(255) not null check (tipo in ('Biológico', 'Específico', 'Fitoterápico', 'Genérico', 'Novo', 'Outros', 'Produto de Terapia Avançada', 'Radiofármaco', 'Similar')), 
   controle        varchar(255) not null check (controle in ('Não controlado', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'AM')), 
   quantidade      varchar(255), 
+  ggrem           numeric(15) not null unique,
+  classe          varchar(255) not null,
   preco           numeric(10, 2) not null
 );
 

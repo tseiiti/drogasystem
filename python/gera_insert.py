@@ -94,6 +94,7 @@ def venda(clis, pros, dat, venda_id):
     preco = float(ests[p][3])
     contr = ests[p][4]
     
+    # VERIFICAR SE É MEDICAMENTO CONTROLADO!!!
     # profissional
     if contr != "Não controlado":
       pro = str(pros[random.randrange(len(pros))][0])

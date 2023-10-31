@@ -5,7 +5,7 @@ class MedicamentoSearch(Search):
   # personaliza atributos da lista
   def set_cols_rows(self):
     sql = "select "
-    sql += "estoque.id, concat(laboratorio.nome, ', ', medicamento.nome) as nome,  "
+    sql += "estoque.id, medicamento.nome, laboratorio.nome as laboratorio,  " # mais subistancia!!!
     sql += "medicamento.tipo, medicamento.preco, estoque.lote, estoque.quant_atual "
     sql += "from medicamento "
     sql += "join laboratorio on laboratorio.id = medicamento.laboratorio_id "
