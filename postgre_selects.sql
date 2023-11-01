@@ -1,4 +1,4 @@
--- Active: 1692452936450@@127.0.0.1@5432@drogasystem@public
+-- Active: 1698355710028@@127.0.0.1@5432@DrogaSystem@public
 
 select * from laboratorio order by 1;
 select * from medicamento order by 1;
