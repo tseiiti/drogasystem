@@ -25,6 +25,7 @@ class Read(App):
       [sg.Button(" Voltar "), sg.Button(" Novo ")]]
     
     self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.win_size, finalize=True)
+    self.window.TKroot.focus_force() 
     self.window["-PESQUISAR-"].set_focus()
     
   # define ações e regras da tela
@@ -43,7 +44,7 @@ class Read(App):
   # define o conteúdo da tabela
   def set_cols_rows(self):
     s = ut.where_pesquisa(self.pesquisar, self.model.columns())
-    sql = f"select * from {self.model.tn} {s}order by 1"
+    sql = f"select * from {self.model.tn} {s}order by 1;"
     self.rows = self.model.find_by_sql(sql)
   
   # método auxiliar para chamar a tela auxiliar de atualização do registro

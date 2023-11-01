@@ -29,13 +29,13 @@ class Main(App):
       [sg.HorizontalSeparator()], 
       [sg.Image(f'images/drogasystem.png', expand_x=True, expand_y=True)]
       ], [
-      sg.Button("Laboratório", size=(12, 4)), 
-      sg.Button("Medicamento", size=(12, 4)), 
-      sg.Button("Estoque", size=(12, 4)), 
-      sg.Button("Cliente", size=(12, 4)), 
-      sg.Button("Profissional", size=(12, 4)), 
-      sg.Button("Venda", size=(12, 4)), 
-      sg.Button("Sair", key=" Voltar ", size=(12, 4)), 
+      sg.Button("Laboratório", size=(10, 4)), 
+      sg.Button("Medicamento", size=(10, 4)), 
+      sg.Button("Estoque", size=(10, 4)), 
+      sg.Button("Cliente", size=(10, 4)), 
+      sg.Button("Profissional", size=(10, 4)), 
+      sg.Button("Venda", size=(10, 4)), 
+      sg.Button("Sair", key=" Voltar ", size=(10, 4)), 
       [sg.HorizontalSeparator()]
       ], [
       [sg.Text(key="-SAIDA-", size=(40, 1))]
