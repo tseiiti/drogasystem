@@ -1,8 +1,5 @@
 -- Active: 1698656816356@@127.0.0.1@5432@drogasystem@public
 
--- drop database if exists drogasystem;
--- create database drogasystem;
-
 drop table if exists laboratorio cascade;
 drop table if exists medicamento cascade;
 drop table if exists estoque cascade;

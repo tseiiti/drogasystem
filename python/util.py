@@ -60,11 +60,12 @@ class Util:
   def where_pesquisa(pesquisa, columns, with_where=True):
     resultado = ""
     if pesquisa and columns:
-      print(columns)
       aux = []
       for col in columns:
         aux.append(f"cast({col} as varchar) ilike '%{pesquisa}%'")
       resultado = " or ".join(aux)
       if with_where:
         resultado = f"where {resultado} "
+      else:
+        resultado = f"and ({resultado}) "
     return resultado
