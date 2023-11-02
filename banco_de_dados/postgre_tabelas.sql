@@ -29,7 +29,6 @@ create table medicamento (
   quantidade      varchar(255), 
   ggrem           numeric(15) not null unique,
   classe          varchar(255) not null,
-  custo           numeric(10, 2) not null,
   preco           numeric(10, 2) not null
 );
 
@@ -40,7 +39,7 @@ create table estoque (
   lote            varchar(255) not null, 
   data            date not null default current_date, 
   validade        date not null, 
-  preco           numeric(10, 2) not null, 
+  custo           numeric(10, 2) not null,
   quant_inicial   int not null, 
   quant_venda     int not null default 0, 
   quant_atual     int not null default 0
