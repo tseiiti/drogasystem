@@ -4,11 +4,11 @@ from read import ut, Read
 class EstoqueRead(Read):
   # personaliza atributos da lista
   def set_cols_rows(self):
-    cols = ["estoque.id", "medicamento.nome as medicamento", "estoque.quant_atual", "estoque.preco", "estoque.validade"]
+    cols = ["estoque.id", "medicamento.nome", "estoque.quant_atual", "estoque.custo", "estoque.validade"]
 
-    sql = "select "
-    sql += ", ".join(cols)
-    sql += " from estoque "
+    sql  = "select "
+    sql += "estoque.id, medicamento.nome as medicamento, estoque.quant_atual, estoque.custo, estoque.validade "
+    sql += "from estoque "
     sql += "join medicamento on medicamento.id = estoque.medicamento_id "
 
     sql += ut.where_pesquisa(self.pesquisar, cols)
