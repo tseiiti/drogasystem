@@ -23,21 +23,20 @@ order by estoque_total.total - estoque_total.minimo;
 
 -- lucro por produto
 select medicamento.id, medicamento.nome
-  , to_char(sum(itens_venda.total - estoque.custo * itens_venda.quantidade), '999990.99') lucro_total
-  , to_char(min(itens_venda.total / itens_venda.quantidade - estoque.custo), '999990.99') menor_lucro_unitario
-  , to_char(max(itens_venda.total / itens_venda.quantidade - estoque.custo), '999990.99') maior_lucro_unitario
+  , to_char(sum(itens_venda.total - estoque.custo * itens_venda.quantidade), '999990.00') lucro_total
+  , to_char(min(itens_venda.total / itens_venda.quantidade - estoque.custo), '999990.00') menor_lucro_unitario
+  , to_char(max(itens_venda.total / itens_venda.quantidade - estoque.custo), '999990.00') maior_lucro_unitario
   , sum(itens_venda.quantidade) quant_venda
   , sum(itens_venda.desconto) total_desconto
   , min(estoque.custo) custo
   , min(medicamento.preco) preco
-  , to_char(min(itens_venda.total / itens_venda.quantidade), '999990.99') preco_venda
+  , to_char(min(itens_venda.total / itens_venda.quantidade), '999990.00') preco_venda
 from medicamento
 left join estoque on estoque.medicamento_id = medicamento.id
 left join itens_venda on itens_venda.medicamento_id = medicamento.id
 where estoque.quant_venda > 0
 group by medicamento.id, medicamento.nome
-order by sum(itens_venda.total - estoque.custo * itens_venda.quantidade) desc;
--- order by 6 desc;
+order by 3 desc;
 
 -- medicamentos mais vendidos
 select medicamento.id, medicamento.nome, sum(quant_venda) quant_venda
@@ -61,6 +60,32 @@ from estoque_total
 join medicamento on medicamento.id = estoque_total.medicamento_id
 where estoque_total.total < estoque_total.minimo;
 
+select * from venda where id = 2;
+select * from itens_venda where venda_id = 2;
+select * from venda 
+join itens_venda on itens_venda.venda_id = venda.id;
+
+select to_char(time_stamp, 'Month'), to_char(time_stamp, 'dd/mm/yyyy'), to_char(time_stamp, 'hh24:mi:ss'), * from venda;
+
+-- vendas por sexo do cliente
+select sexo, sum(total)
+from venda 
+join cliente on cliente.id = venda.cliente_id
+group by sexo;
+
+-- total de vendas por mês
+select to_char(time_stamp, 'yyyymm'), sum(total) 
+from venda
+group by to_char(time_stamp, 'yyyymm')
+order by 1;
+
+-- verifica totais
+select venda.id, venda.total, sum(itens_venda.quantidade), sum(itens_venda.desconto), sum(itens_venda.total) 
+from venda 
+join itens_venda on itens_venda.venda_id = venda.id
+group by venda.id, venda.total
+-- having venda.total != sum(itens_venda.total)
+order by 1;
 
 -- create TEMPORARY TABLE x (aaa char(10));
 -- select * from x;
