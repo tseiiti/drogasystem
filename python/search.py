@@ -8,6 +8,7 @@ class Search(App):
 
   # define os componentes da tela
   def view(self):
+    self.win_size = (900, 376)
     self.pesquisar = ""
     self.set_cols_rows()
     self.cols = [ut.corretor(c) for c in self.model.columns()]
@@ -21,7 +22,8 @@ class Search(App):
       [ut.gen_table(self.rows, self.cols)], 
       [sg.Button(" Voltar ")]]
     
-    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=(700, 376), finalize=True)
+    self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.win_size, finalize=True)
+    self.window.TKroot.focus_force() 
     self.window["-PESQUISAR-"].set_focus()
     
   # define ações e regras da tela

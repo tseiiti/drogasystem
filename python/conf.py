@@ -12,6 +12,7 @@ dc = {
   "main": "DrogaSystem", 
   "laboratorio": "laboratório", 
   "laboratorio_id": "laboratório", 
+  "substancia": "substância", 
   "razao": "razão social", 
   "apresentacao": "apresentação", 
   "preco": "preço", 
