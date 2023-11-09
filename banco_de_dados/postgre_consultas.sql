@@ -35,9 +35,6 @@ SELECT p.nome AS "Cliente", SUM(v.total) AS "Total de vendas", round(SUM(v.total
                             WHERE p.nome IS NOT NULL 
                                 AND extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023)
     ORDER BY COUNT(v.id) DESC, "Idade" ASC;
-select * from cliente c ;
-select * from pessoa c ;
-
 
 
 -- Histórico de compra dos Clientes assíduos baseado na frequência média do mês

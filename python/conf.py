@@ -24,5 +24,6 @@ dc = {
   "time_stamp": "horário", 
   "cliente_id": "cliente", 
   "profissional_id": "profissional", 
+  "estoque_total": "estoque total", 
   "quant_venda": "quant. venda"
 }
