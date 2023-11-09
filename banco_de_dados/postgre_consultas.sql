@@ -16,6 +16,7 @@ SELECT med.nome AS "Medicamento", SUM(iv.total) AS "Total de vendas", SUM(iv.qua
         GROUP BY med.nome
         ORDER BY med.nome ;
 
+
 -- Clientes assíduos baseado na frequência média do mês
 SELECT p.nome AS "Cliente", SUM(v.total) AS "Total de vendas", round(SUM(v.total)/COUNT(v.total), 2) AS "Ticket médio", 
         COUNT(v.id) AS "Frequência", FLOOR((CURRENT_DATE - c.data_nasc)/365.25) AS "Idade", p.telefone AS "Telefone", p.logradouro||', '||p.numero AS "Endereço"
@@ -38,33 +39,54 @@ SELECT p.nome AS "Cliente", SUM(v.total) AS "Total de vendas", round(SUM(v.total
 
 
 -- Histórico de compra dos Clientes assíduos baseado na frequência média do mês
-with cli as (
-    select c.id, p.nome from cliente c 
-    JOIN pessoa p
-        ON (p.id = c.id)
-)
-select c.nome "cliente", m.nome "medicamento", count(iv.id)
-from venda v
-join itens_venda iv on iv.venda_id = v.id
-join medicamento m on m.id = iv.medicamento_id
-join cli c on c.id = v.cliente_id
-where v.cliente_id in (
-    SELECT c.id
-    FROM venda v 
-    JOIN cli c
-        ON (v.cliente_id = c.id)
-    WHERE extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023
-    GROUP BY c.id
-    HAVING COUNT(v.id) > (SELECT  CEIL(CAST(COUNT(v.id) AS NUMERIC)/ CAST(COUNT(DISTINCT c.nome) AS NUMERIC)) AS "Frequência média"
+SELECT p.nome "cliente", m.nome "medicamento", COUNT(iv.id)
+    FROM venda v
+    JOIN itens_venda iv ON (iv.venda_id = v.id)
+    JOIN medicamento m ON (m.id = iv.medicamento_id)
+    JOIN cliente c ON (c.id = v.cliente_id)
+    JOIN pessoa p ON (p.id = c.id)
+    WHERE v.cliente_id IN (
+        SELECT c.id
+            FROM venda v 
+            JOIN cliente c
+                ON (v.cliente_id = c.id)
+            WHERE extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023
+            GROUP BY c.id
+            HAVING COUNT(v.id) > (SELECT  CEIL(CAST(COUNT(v.id) AS NUMERIC)/ CAST(COUNT(DISTINCT c.id) AS NUMERIC)) AS "Frequência média"
                             FROM venda v 
-                            JOIN cli c
+                            JOIN cliente c
                                 ON (v.cliente_id = c.id)
-                            WHERE c.nome IS NOT NULL 
-                                AND extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023)
-                                )
+                            WHERE  extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023)
+                            )
+    AND extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023
+    GROUP BY p.nome, m.nome;
 
-    and extract(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023
-GROUP BY c.nome, m.nome
+with cli as ( -- quantidade de venda por cliente no mês/ano
+    select c.id, extract(year from v.time_stamp) ano, extract(month from v.time_stamp) mes, count(v.id) qtd
+    from venda v 
+    join cliente c on c.id = v.cliente_id
+    group by c.id, ano, mes
+), med as ( -- média de venda por cliente por mês
+    select ano, mes, ceil(avg(qtd)) avg_qtd from cli
+    group by ano, mes
+), ass as ( -- quantidade de venda por cliente no mês/ano somente assíduos
+    select cli.* from cli
+    join med on med.ano = cli.ano and med.mes = cli.mes
+    where cli.qtd > med.avg_qtd
+)
+select p.nome "cliente", m.nome "medicamento", count(iv.id)
+    from venda v
+    join itens_venda iv on iv.venda_id = v.id
+    join medicamento m on m.id = iv.medicamento_id
+    join cliente c on c.id = v.cliente_id
+    join pessoa p on p.id = c.id
+    join ass a on a.id = c.id
+        and a.ano = extract(year from v.time_stamp)
+        and a.mes = extract(month from v.time_stamp)
+    where a.ano = 2023
+    and a.mes = 9
+    group by p.nome, m.nome
+    order by 1, 2
 ;
 
 
@@ -129,6 +151,7 @@ SELECT med.id AS "Id", med.nome AS "Medicamento", med.controle AS "Tipo de contr
         GROUP BY med.id, med.nome, med.controle
         ORDER BY med.controle ASC;
 
+
 -- Medicamentos próximos do vencimento de acordo com um intervalo estabelecido (3 meses)
 SELECT med.id AS "Id", med.nome AS "Medicamento", e.validade, quant_atual
     FROM estoque e
@@ -147,11 +170,13 @@ SELECT SUM(v.total) AS "Total de vendas", p.bairro AS "Bairro dos clientes"
         GROUP BY p.bairro
         ORDER BY SUM(v.total) DESC;
 
+
 -- medicamentos com estoque baixo
 select medicamento.nome, estoque_total.minimo, estoque_total.total restante
 from estoque_total 
 join medicamento on medicamento.id = estoque_total.medicamento_id
 where estoque_total.total < estoque_total.minimo;
+
 
 -- lucro por produto
 select medicamento.id, medicamento.nome
@@ -189,4 +214,4 @@ select v.time_stamp, m.nome, iv.quantidade, iv.total
 from venda v, itens_venda iv, medicamento m
 where v.id = iv.venda_id
 and m.id = iv.medicamento_id
-and v.time_stamp between '2023-09-01' and '2023-09-30';
+and v.time_stamp between '2023-09-01' and '2023-10-01';
