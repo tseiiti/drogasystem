@@ -72,14 +72,15 @@ class VendaSave(Save):
         sg.popup("Não é possível alterar uma venda")
 
     elif event == " Salvar ":
+      # projeta o id da venda para inserts dos itens
+      aux = self.model.find_by_sql('select coalesce(max(id), 0) + 1 as id from venda;')
+
       # cria insert da venda
       venda = self.get_params(values, self.dic)
+      venda['id'] = aux[0][0]
       venda['cliente_id'] = self.cliente_id if self.cliente_id else None
       venda['profissional_id'] = self.profissional_id if self.profissional_id else None
       sql = self.model.sql_ins(venda)
-
-      # projeta o id da venda para inserts dos itens
-      aux = self.model.find_by_sql('select coalesce(max(id), 0) + 1 as id from venda;')
 
       for row in self.rows:
         # cria inserts dos itens de venda

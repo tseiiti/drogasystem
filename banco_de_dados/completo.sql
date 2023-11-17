@@ -28,7 +28,7 @@ create table medicamento (
   substancia      varchar(255) not null, 
   dosagem         varchar(255), 
   apresentacao    varchar(255) not null check (apresentacao in ('Sólido', 'Líquido', 'Semissólido')), 
-  tipo            varchar(255) not null check (tipo in ('Biológico', 'Específico', 'Fitoterápico', 'Genérico', 'Novo', 'Outros', 'Produto de Terapia Avançada', 'Radiofármaco', 'Similar')), 
+  tipo            varchar(255) not null check (tipo in ('Específico', 'Genérico', 'Novo', 'Referência', 'Similar')), 
   controle        varchar(255) not null check (controle in ('Liberado', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'AM')), 
   quantidade      varchar(255), 
   ggrem           numeric(15) not null unique,

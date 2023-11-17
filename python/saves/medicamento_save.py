@@ -17,10 +17,10 @@ class MedicamentoSave(Save):
         opc = ["Sólido", "Líquido", "Semissólido"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "tipo":
-        opc = ["Genérico", "Similar", "Referência"]
+        opc = ["Específico", "Genérico", "Novo", "Referência", "Similar"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       elif k == "controle":
-        opc = ["Não controlado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"]
+        opc = ["Liberado", "A2", "A3", "B1", "B2", "C1", "C2", "AM"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))
