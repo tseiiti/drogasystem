@@ -13,5 +13,5 @@ class VendaRead(Read):
     sql += "left join profissional on profissional.id = venda.profissional_id "
 
     sql += ut.where_pesquisa(self.pesquisar, cols)
-    sql += "order by 1;"
+    sql += "order by 1 desc;"
     self.rows = self.model.find_by_sql(sql)
