@@ -23,18 +23,35 @@ class EstoqueSave(Save):
       content.append(aux)
     return content
     
-
   def controller(self, event, values): 
     if event == " Salvar ":
       params = self.get_params(values, self.dic)
-      params["medicamento_id"] = [e[1] for e in self.meds if e[0] == params['medicamento_id']][0]
-      if self.dic["id"]:
-        self.error_out(self.model.update(params))
+      medicamento_id = [e[1] for e in self.meds if e[0] == params["medicamento_id"]][0]
+
+      if params["id"]:
+        estoque = self.model.find(params["id"])
       else:
-        self.error_out(self.model.insert(params))
+        estoque = { "quant_inicial": 0, "quant_venda": 0 }
+
+      estoque_total = self.model.estoque_total.find(None, where=f"medicamento_id = {medicamento_id}")
+      del estoque_total["minimo"]
+      del estoque_total["maximo"]
+          
+      params["medicamento_id"] = medicamento_id
+      params["quant_inicial"] = values["-QUANT_INICIAL-"]
+      params["quant_atual"] = int(params["quant_inicial"]) - estoque["quant_venda"]
+
+      if self.dic["id"]:
+        sql = self.model.sql_upd(params)
+      else:
+        sql = self.model.sql_ins(params)
       
-  # # adiciona atributo personalizado na atualização
-  # def get_params(self, values, dic):
-  #   params = super().get_params(values, dic)
-  #   params["medicamento_id"] = [e[1] for e in self.meds if e[0] == params['medicamento_id']][0]
-  #   return params
+      if estoque_total["id"]:
+        estoque_total["total"] += int(params["quant_inicial"]) - estoque["quant_inicial"]
+        sql += self.model.estoque_total.sql_upd(estoque_total)
+      else:
+        estoque_total["medicamento_id"] = medicamento_id
+        estoque_total["total"] = int(params["quant_inicial"]) 
+        sql += self.model.estoque_total.sql_ins(estoque_total)
+
+      self.error_out(self.model.commit(sql))

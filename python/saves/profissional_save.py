@@ -36,7 +36,7 @@ class ProfissionalSave(Save):
       pessoa = super().get_params(values, self.pessoa)
 
       if pessoa["id"] == "":
-        aux = self.model.pessoa.find_by_sql('select coalesce(max(id), 0) + 1 as id id from pessoa;')
+        aux = self.model.pessoa.find_by_sql('select coalesce(max(id), 0) + 1 as id from pessoa;')
         pessoa["id"] = aux[0][0]
         profissional["id"] = aux[0][0]
         sql = self.model.pessoa.sql_ins(pessoa)

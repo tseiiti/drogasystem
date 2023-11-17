@@ -25,8 +25,9 @@ class Model:
     return self.exec(sql, self.all)
   
   # procura um registro específico
-  def find(self, id, cols="*"):
-    sql = f"select {cols} from {self.tn} where id = {id};"
+  def find(self, id, cols="*", where=None):
+    where = f"where {where}" if where else f"where id = {id}"
+    sql = f"select {cols} from {self.tn} {where};"
     return self.exec(sql, self.one)
 
   # select com colunas

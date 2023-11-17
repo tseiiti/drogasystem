@@ -49,7 +49,7 @@ create table estoque_total (
   id              serial primary key, 
   medicamento_id  int not null unique references medicamento(id), 
   total           int not null, 
-  minimo          int not null default 0, 
+  minimo          int not null default 1, 
   maximo          int not null default 9999
 );
 
