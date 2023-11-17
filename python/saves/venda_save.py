@@ -66,10 +66,9 @@ class VendaSave(Save):
     self.win_size = (850, 650)
     return content
 
-  def controller(self, event, values):    
-    if event in (" Salvar ", "CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
-    # if event in ("CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR") and self.dic["id"]: 
-        sg.popup("Não é possível alterar uma venda")
+  def controller(self, event, values): 
+    if self.dic["id"] and event in (" Salvar ", "CLIENTE", "PROFISSIONAL", "SELECIONAR", "ADICIONAR"): 
+      sg.popup("Não é possível alterar uma venda")
 
     elif event == " Salvar ":
       # projeta o id da venda para inserts dos itens
@@ -203,10 +202,4 @@ class VendaSave(Save):
 
     self.total_venda += total
     self.window["-TOTAL-"].update(f"{self.total_venda:.2f}")
-
-  # def add_buttons(self):
-  #   if self.dic["id"]:
-  #     return [sg.Button(" Voltar ")]
-  #   else:
-  #     return [sg.Button(" Voltar "), sg.Button(" Salvar ")]
     

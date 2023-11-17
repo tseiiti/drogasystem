@@ -22,7 +22,7 @@ class Read(App):
         sg.Button("ATUALIZAR", size=13, font=('Arial Bold', 7))], 
       [sg.Text(font=('Arial', 1))], 
       [ut.gen_table(self.rows, self.cols)], 
-      [sg.Button(" Voltar "), sg.Button(" Novo ")]]
+      self.add_buttons()]
     
     self.window = sg.Window(ut.win_title(self.model.tname), layout, size=self.win_size, finalize=True)
     self.window.TKroot.focus_force() 
@@ -53,3 +53,7 @@ class Read(App):
     self.open(self.save)
     self.set_cols_rows()
     self.window["-TABLE-"].update(values=self.rows)
+
+  # método para inserir botões extra na tela
+  def add_buttons(self):
+    return [sg.Button(" Voltar "), sg.Button(" Novo ")]

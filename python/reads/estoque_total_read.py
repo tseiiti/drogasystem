@@ -1,4 +1,4 @@
-from read import ut, Read
+from read import sg, ut, Read
 
 # classe personalizada para listar estoque total
 class EstoqueTotalRead(Read):
@@ -14,3 +14,6 @@ class EstoqueTotalRead(Read):
     sql += ut.where_pesquisa(self.pesquisar, cols)
     sql += "order by 1;"
     self.rows = self.model.find_by_sql(sql)
+
+  def add_buttons(self):
+    return [sg.Button(" Voltar ")]

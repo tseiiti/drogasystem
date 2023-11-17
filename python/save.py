@@ -21,7 +21,7 @@ class Save(App):
     
     col1 = [[sg.Image(f'images/{self.model.tname.lower()}_vertical.png')]]
     col2 = [
-      [ut.titulo(f"{'Criar' if self.dic['id'] else 'Atualizar'} {ut.corretor(self.model.tname)}")], 
+      [ut.titulo(f"{'Atualizar' if self.dic['id'] else 'Criar'} {ut.corretor(self.model.tname)}")], 
       [sg.HorizontalSeparator()], 
       *content, 
       [sg.HorizontalSeparator()], 

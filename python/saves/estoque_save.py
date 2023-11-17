@@ -11,8 +11,8 @@ class EstoqueSave(Save):
 
       if k == "medicamento_id":
         v = self.model.medicamento.find(self.dic["medicamento_id"])["nome"] if self.dic["medicamento_id"] else ""
-        self.meds = [e for e in self.model.medicamento.select(cols="id, nome")]
-        aux.append(sg.Combo([e[1] for e in self.meds], default_value=v, key=f"-{k.upper()}-", size=44, enable_events=True))
+        self.meds = [e for e in self.model.medicamento.select(cols="nome, id")]
+        aux.append(sg.Combo([e[0] for e in self.meds], default_value=v, key=f"-{k.upper()}-", size=44, enable_events=True))
       elif k in ["data", "validade"]: 
         inp, cal = ut.calendario(k, v)
         aux.append(inp)
@@ -23,8 +23,18 @@ class EstoqueSave(Save):
       content.append(aux)
     return content
     
-  # adiciona atributo personalizado na atualização
-  def get_params(self, values, dic):
-    params = super().get_params(values, dic)
-    params["medicamento_id"] = [e[0] for e in self.meds if e[1] == params['medicamento_id']][0]
-    return params
+
+  def controller(self, event, values): 
+    if event == " Salvar ":
+      params = self.get_params(values, self.dic)
+      params["medicamento_id"] = [e[1] for e in self.meds if e[0] == params['medicamento_id']][0]
+      if self.dic["id"]:
+        self.error_out(self.model.update(params))
+      else:
+        self.error_out(self.model.insert(params))
+      
+  # # adiciona atributo personalizado na atualização
+  # def get_params(self, values, dic):
+  #   params = super().get_params(values, dic)
+  #   params["medicamento_id"] = [e[1] for e in self.meds if e[0] == params['medicamento_id']][0]
+  #   return params

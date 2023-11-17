@@ -22,7 +22,7 @@ class ClienteSave(Save):
         aux.append(cal)
       elif k == "sexo":
         v = "Masculino" if v == "M" else "Feminino"
-        opc = ["Masculino", "Feminino"]
+        opc = ["Feminino", "Masculino"]
         aux.append(sg.Combo(opc, default_value=v, key=f"-{k.upper()}-", size=44))
       else:
         aux.append(sg.Input(default_text=v, key=f"-{k.upper()}-", disabled=(k=="id")))

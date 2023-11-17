@@ -6,3 +6,4 @@ class EstoqueModel(Model):
   def __init__(self):
     super().__init__()
     self.medicamento = Model("Medicamento")
+    self.estoque_total = Model("Estoque_total")
