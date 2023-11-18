@@ -25,7 +25,7 @@ class VendaSave(Save):
 
     # seleciona itens de venda para consulta
     if self.dic["id"]:
-      sql += f"where itens_venda.venda_id = {self.dic['id']}"
+      sql += f"where itens_venda.venda_id = {self.dic['id']} "
       sql += "order by 1 "
       self.rows = self.model.find_by_sql(sql)
 

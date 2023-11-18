@@ -1,4 +1,3 @@
--- Active: 1698656816356@@127.0.0.1@5432@drogasystem@public
 
 -- estoque inicial
 insert into estoque values (default, 1, 'lote 563480', '2022-11-08', '2024-07-30', 53.61, 10, 0, 10); 
