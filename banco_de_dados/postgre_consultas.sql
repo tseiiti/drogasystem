@@ -151,7 +151,14 @@ SELECT med.id AS "Id", med.nome AS "Medicamento", med.controle AS "Tipo de contr
 
 
 -- Medicamentos próximos do vencimento de acordo com um intervalo estabelecido (3 meses)
-SELECT med.id AS "Id", med.nome AS "Medicamento", e.validade, quant_atual
+SELECT med.id AS "Id", med.nome AS "Medicamento",
+    (e.validade- current_date) AS "Dias p/ vencimento",
+    TO_CHAR(e.validade, 'DD/MM/YYYY') AS "Validade", e.lote AS "Lote",
+        CASE 
+        WHEN (e.validade- current_date) <= 90 THEN 'Colocar em promoção'
+        WHEN (e.validade- current_date) <= 15 THEN 'Retirar da prateleira'
+        WHEN (e.validade- current_date) <= 0 THEN  'Descartar'
+    END AS "Ação"
     FROM estoque e
     JOIN medicamento med
         ON (e.medicamento_id = med.id)
@@ -213,3 +220,16 @@ from venda v, itens_venda iv, medicamento m
 where v.id = iv.venda_id
 and m.id = iv.medicamento_id
 and v.time_stamp between '2023-09-01' and '2023-10-01';
+
+-- Medicamentos que não tiverem venda
+SELECT m.nome AS "Medicamento"
+FROM medicamento m
+LEFT JOIN 
+(SELECT m.id AS "med_id"
+FROM itens_venda iv INNER JOIN venda v
+    ON v.id = iv.venda_id
+INNER JOIN medicamento m
+    ON m.id = iv.medicamento_id
+WHERE v.time_stamp >= '2023-01-01' and v.time_stamp < '2023-06-01') AS cons_med
+ON m.id = cons_med.med_id
+WHERE cons_med.med_id IS NULL;
