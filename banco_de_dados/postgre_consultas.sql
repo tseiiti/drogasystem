@@ -1,9 +1,12 @@
 
 
---Total de venda por medicamento genérico do mês 9
-SELECT med.nome AS "Medicamento", SUM(iv.total) AS "Total de vendas", SUM(iv.quantidade) AS "Unidades Vendidas",
-        ROUND(SUM(iv.total)/SUM(iv.quantidade),2) AS "Preço médio", ROUND(SUM(iv.desconto)/SUM(iv.quantidade),2) AS "Desconto médio", 
-        SUM(iv.desconto) AS "Total de descontos", ROUND(SUM(iv.desconto)/ SUM(iv.total) * 100, 2) AS "% desconto"
+--Total de venda por tipo de medicamento do mês 9
+SELECT med.nome AS "Medicamento", SUM(iv.total) AS "Total de vendas", 
+       SUM(iv.quantidade) AS "Unidades Vendidas",
+       ROUND(SUM(iv.total)/SUM(iv.quantidade),2) AS "Preço médio", 
+       ROUND(SUM(iv.desconto)/SUM(iv.quantidade),2) AS "Desconto médio", 
+       SUM(iv.desconto) AS "Total de descontos", 
+       ROUND(SUM(iv.desconto)/ SUM(iv.total+iv.desconto) * 100, 2) AS "% desconto"
     FROM venda v 
     JOIN itens_venda iv 
         ON (v.id = iv.venda_id)
@@ -12,7 +15,7 @@ SELECT med.nome AS "Medicamento", SUM(iv.total) AS "Total de vendas", SUM(iv.qua
     WHERE EXTRACT(MONTH FROM v.time_stamp) = 9 AND EXTRACT(YEAR FROM v.time_stamp) = 2023
         AND med.tipo = 'Genérico'
         GROUP BY med.nome
-        ORDER BY med.nome ;
+        ORDER BY SUM(iv.total) DESC ;
 
 
 -- Clientes assíduos baseado na frequência média do mês
@@ -184,7 +187,9 @@ where estoque_total.total < estoque_total.minimo;
 
 
 -- lucro por produto
-select medicamento.id, medicamento.nome
+select medicamento.id
+  , medicamento.nome, sum(itens_venda.total) receita
+  , sum(itens_venda.desconto) desconto
   , round(sum(itens_venda.total - estoque.custo * itens_venda.quantidade), 2) lucro_total
   , round(min(itens_venda.total / itens_venda.quantidade - estoque.custo), 2) menor_lucro_unitario
   , round(max(itens_venda.total / itens_venda.quantidade - estoque.custo), 2) maior_lucro_unitario
@@ -201,25 +206,12 @@ group by medicamento.id, medicamento.nome, estoque.custo, medicamento.preco
 order by 3 desc;
 
 
--- desconto por produto
-select medicamento.id, medicamento.nome
-  , sum(itens_venda.desconto) total_desconto
-from medicamento
-left join estoque on estoque.medicamento_id = medicamento.id
-left join itens_venda on itens_venda.medicamento_id = medicamento.id
-left join venda on venda.id = itens_venda.venda_id
-where estoque.quant_venda > 0
-and extract(MONTH FROM venda.time_stamp) = 9 AND EXTRACT(YEAR FROM venda.time_stamp) = 2023
-group by medicamento.id, medicamento.nome, estoque.custo, medicamento.preco
-order by 3 desc;
-
-
--- histórico de venda por produto
-select v.time_stamp, m.nome, iv.quantidade, iv.total
-from venda v, itens_venda iv, medicamento m
-where v.id = iv.venda_id
-and m.id = iv.medicamento_id
-and v.time_stamp between '2023-09-01' and '2023-10-01';
+-- -- histórico de venda por produto
+-- select v.time_stamp, m.nome, iv.quantidade, iv.total
+-- from venda v, itens_venda iv, medicamento m
+-- where v.id = iv.venda_id
+-- and m.id = iv.medicamento_id
+-- and v.time_stamp between '2023-09-01' and '2023-10-01';
 
 -- Medicamentos que não tiverem venda
 SELECT m.nome AS "Medicamento"
