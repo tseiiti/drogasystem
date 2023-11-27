@@ -1,8 +1,8 @@
 # configurações do banco de dados
 db = {
-  "database": "DrogaSystem", 
+  "database": "drogasystem", 
   "user": "postgres", 
-  "password": "827391", 
+  "password": "postgres", 
   "host": "localhost", 
   "port": "5432"
 }

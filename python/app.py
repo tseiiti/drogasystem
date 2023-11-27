@@ -19,8 +19,8 @@ class App:
     self.error = ""
     while True:
       event, values = self.window.read()
-      if event != "-PESQUISAR-":
-        print(type(self).__name__ + ":", event, values)
+      # if event != "-PESQUISAR-":
+      #   print(type(self).__name__ + ":", event, values)
 
       if event == " Voltar " or event == sg.WIN_CLOSED: break
       self.controller(event, values)

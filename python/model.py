@@ -82,11 +82,11 @@ class Model:
       return fun(sql, con, cur)
       
     except (Exception, psycopg2.Error) as error:
-      print("Error:", error)
+      # print("Error:", error)
       return error
 
     finally:
-      print("SQL:", sql)
+      # print("SQL:", sql)
       if cur: cur.close()
       if con: con.close()
 

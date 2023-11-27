@@ -9,7 +9,7 @@ class Read(App):
 
   # define os componentes da tela
   def view(self):
-    self.win_size = (1000, 540)
+    self.win_size = (1000, 510)
     self.pesquisar = ""
     self.set_cols_rows()
     self.cols = [ut.corretor(c) for c in self.model.columns()]
