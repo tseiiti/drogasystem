@@ -132,8 +132,7 @@ class VendaSave(Save):
       if self.ret and self.ret[0]:
         sql = "select estoque.id, estoque.medicamento_id, "
         sql += "concat(laboratorio.nome, ', ', medicamento.nome, ' ', medicamento.dosagem, "
-        sql += "'\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle, "
-        sql += "'\n', medicamento.apresentacao, ', ', medicamento.quantidade, "
+        sql += "'\n', medicamento.tipo, ', ', medicamento.apresentacao, ', ', medicamento.controle, ', ', medicamento.quantidade, "
         sql += "'\npreço unitário: R$ ', medicamento.preco) as descricao, "
         sql += "medicamento.nome, medicamento.preco, estoque.lote, estoque.quant_atual "
         sql += "from medicamento "
