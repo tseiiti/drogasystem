@@ -20,7 +20,7 @@ class App:
     self.error = ""
     while True:
       event, values = self.window.read()
-      if event != "-PESQUISAR-" and pr[" log"]:
+      if event != "-PESQUISAR-" and pr["log"]:
         print(type(self).__name__ + ":", event, values)
 
       if event == " Voltar " or event == sg.WIN_CLOSED: break
