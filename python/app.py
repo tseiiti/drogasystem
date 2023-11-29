@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from util import Util as ut
+from conf import pr
 
 # classe padrão com funções primárias e auxiliares para todo o sistema
 class App:
@@ -19,7 +20,7 @@ class App:
     self.error = ""
     while True:
       event, values = self.window.read()
-      if event != "-PESQUISAR-":
+      if event != "-PESQUISAR-" and pr["log"]:
         print(type(self).__name__ + ":", event, values)
 
       if event == " Voltar " or event == sg.WIN_CLOSED: break

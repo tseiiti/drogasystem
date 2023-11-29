@@ -1,5 +1,5 @@
 import psycopg2
-from conf import db
+from conf import db, pr
 from util import Util as ut
 
 # classe Object-Relational Mapping (ORM)
@@ -82,11 +82,11 @@ class Model:
       return fun(sql, con, cur)
       
     except (Exception, psycopg2.Error) as error:
-      print("Error:", error)
+      if pr["log"]: print("Error:", error)
       return error
 
     finally:
-      print("SQL:", sql)
+      if pr["log"]: print("SQL:", sql)
       if cur: cur.close()
       if con: con.close()
 

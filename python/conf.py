@@ -27,3 +27,7 @@ dc = {
   "estoque_total": "estoque total", 
   "quant_venda": "quant. venda"
 }
+
+pr = {
+  "log": True
+}
