@@ -13,22 +13,36 @@ for i in cabecalho:
     resposta = cursor.fetchall()
     
     resposta = pd.DataFrame(resposta)
-    if i == 'medicamento':
-        print(f'Os cabeçalhos da tabela {i} são: {colunas}')
-    print(resposta)
+    
     
     subquery1 = f'SELECT column_name FROM information_schema.columns'
     subquery2 = f' WHERE table_name = \'{i}\''
     query = subquery1+subquery2
     cursor.execute(query)
     colunas = cursor.fetchall()
-    if i == 'medicamento':
-        print(f'Os cabeçalhos da tabela {i} são: {colunas}')
-    resposta = cursor.fetchall()
     
-    # a = []
-    # for j in colunas:
-    #     a.append(j[0])
-    # resposta.columns = a
-    # resposta.to_excel(f'{i}.xlsx')
+    # if i == 'medicamento':
+    #     print(f'Os cabeçalhos da tabela {i} são: {colunas}')
+    # resposta = cursor.fetchall()
+    
+    a = []
+
+    for j in colunas:
+        a.append(j[0])
+    # print(f'Os cabeçalhos da tabela {i} são: {a}')
+    
+    #     print(f'Os cabeçalhos da tabela {i} são: {j[0]}')
+    
+    
+    if i == 'estoque':
+        col_estoque = ['id', 'medicamento_id','lote',  'data', 'validade', 'custo', 'quant_inicial', 'quant_venda','quant_atual']
+        resposta.columns = col_estoque
+    elif i == 'medicamento':
+        col_medicamento = ['id', 'laboratorio_id', 'nome', 'substancia', 'dosagem', 'apresentacao', 'tipo', 'controle', 'quantidade','ggrem', 'classe','preco' ]
+        resposta.columns = col_medicamento
+    elif i == 'pessoa':
+        col_pessoa = ['id', 'nome', 'logradouro','numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado', 'telefone' ]
+        resposta.columns = col_pessoa
+    else : resposta.columns = a
+    resposta.to_excel(f'{i}.xlsx')
 
