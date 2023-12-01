@@ -1,6 +1,7 @@
+-- Active: 1698656816356@@127.0.0.1@5432@drogasystem@public
 
 
---Total de venda por tipo de medicamento do mês 9
+--Total de venda por tipo de medicamento do mês 9 ***
 SELECT med.nome AS "Medicamento", SUM(iv.total) AS "Total de vendas", 
        SUM(iv.quantidade) AS "Unidades Vendidas",
        ROUND(SUM(iv.total)/SUM(iv.quantidade),2) AS "Preço médio", 
@@ -91,7 +92,7 @@ select p.nome "cliente", m.nome "medicamento", count(iv.id)
 ;
 
 
--- Venda por faixa etária idade por mês
+-- Venda por faixa etária por mês ***
 SELECT SUM(v.total) AS "Total de vendas", round(SUM(v.total)/COUNT(v.total), 2) AS "Ticket médio", 
         COUNT(v.total) AS "Quantidade de vendas", 
         CASE WHEN ROUND((CURRENT_DATE- c.data_nasc)/365.25, 0) >=18 AND ROUND((CURRENT_DATE- c.data_nasc)/365.25, 0) <30 THEN '18-29'
@@ -111,7 +112,7 @@ SELECT SUM(v.total) AS "Total de vendas", round(SUM(v.total)/COUNT(v.total), 2) 
             ROUND((CURRENT_DATE- c.data_nasc)/365.25, 0) >=60 AND ROUND((CURRENT_DATE- c.data_nasc)/365.25, 0) <200;
 
 
--- Medicamentos mais vendidos por faixa etária escolhida no mês escolhido
+-- Medicamentos mais vendidos por faixa etária no mês escolhido
 SELECT med.nome AS "Medicamento", COUNT(med.nome) AS "Qtd vendida"
     FROM venda v 
     JOIN itens_venda iv 
@@ -153,7 +154,7 @@ SELECT med.id AS "Id", med.nome AS "Medicamento", med.controle AS "Tipo de contr
         ORDER BY med.controle ASC;
 
 
--- Medicamentos próximos do vencimento de acordo com um intervalo estabelecido (3 meses)
+-- Medicamentos próximos do vencimento de acordo com um intervalo estabelecido (3 meses) ***
 SELECT med.id AS "Id", med.nome AS "Medicamento",
     (e.validade- current_date) AS "Dias p/ vencimento",
     TO_CHAR(e.validade, 'DD/MM/YYYY') AS "Validade", e.lote AS "Lote",
@@ -213,7 +214,7 @@ order by 3 desc;
 -- and m.id = iv.medicamento_id
 -- and v.time_stamp between '2023-09-01' and '2023-10-01';
 
--- Medicamentos que não tiverem venda
+-- Medicamentos que não tiverem venda ***
 SELECT m.nome AS "Medicamento"
 FROM medicamento m
 LEFT JOIN 
